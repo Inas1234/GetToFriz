@@ -16,4 +16,7 @@ model Users {
     password  String
     firstName String
     lastName  String
+    phoneNumber String
+    gender    String
+    
 }

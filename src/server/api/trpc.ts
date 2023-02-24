@@ -47,6 +47,15 @@ export const createTRPCContext = (_opts: CreateNextContextOptions) => {
   return createInnerTRPCContext({});
 };
 
+export const createContext = async (opts: CreateNextContextOptions) => {
+  const { req, res } = opts;
+  return {
+    res,
+    req,
+    prisma,
+  };
+};
+
 /**
  * 2. INITIALIZATION
  *
