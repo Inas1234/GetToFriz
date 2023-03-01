@@ -1,0 +1,16 @@
+.notification:hover{
+    background-color: rgb(245, 244, 244);
+}
+
+.notification{
+    width: 95%;
+}
+
+.notifications{
+    border: solid 1px gray;
+}
+
+    
+.details{
+    border: solid 1px gray;
+}
