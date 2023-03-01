@@ -9,8 +9,11 @@
 .notifications{
     border: solid 1px gray;
 }
-
     
 .details{
     border: solid 1px gray;
+}
+
+.search{
+    width: 17rem;
 }

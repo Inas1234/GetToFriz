@@ -25,7 +25,7 @@ const Navbar = (props: NavbarProps) => {
         </Head>
         <main className="">
           <nav className="rounded border-gray-200 bg-white px-2 py-2.5 dark:bg-gray-900 sm:px-4 w-full">
-            <div className="container mx-auto w-9/12 flex flex-wrap items-center justify-between">
+            <div className="container mx-auto w-10/12 flex flex-wrap items-center justify-between">
               <Link href="http://localhost:3000" className="flex self-start mt-2.5">
                 <img
                   src={logo.src}
@@ -80,7 +80,7 @@ const Navbar = (props: NavbarProps) => {
                   <input
                     type="text"
                     id="search-navbar"
-                    className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2 pl-10 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+                    className="block search rounded-lg border border-gray-300 bg-gray-50 p-2 pl-10 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
                     placeholder="Search..."
                   />
                 </div>
@@ -140,8 +140,8 @@ const Navbar = (props: NavbarProps) => {
                 </div>
                 {props.loginStatus ? (
                   <ul className="mt-4 flex flex-col rounded-lg border border-gray-100 bg-gray-50 p-4 lg:mt-0 lg:flex-row lg:space-x-8 lg:border-0 lg:bg-white lg:text-sm lg:font-medium ">
-                  <li className='order-2 lg:order-1'>
-                    <button onClick={()=>{setNotificationDropdownOpen(!notificationDropdownOpen); setProfileDropdownOpen(false)}} className="flex items-center justify-between w-full py-2 pl-3 pr-4 font-medium text-gray-700 rounded hover:bg-gray-100 lg:hover:bg-transparent lg:border-0 lg:hover:text-blue-700 lg:p-0 lg:w-auto lg:ml-8">
+                  <li className='order-2 lg:order-1 '>
+                    <button onClick={()=>{setNotificationDropdownOpen(!notificationDropdownOpen); setProfileDropdownOpen(false)}} className="flex lg:ml-4 items-center justify-between w-full py-2 pl-3 pr-4 font-medium text-gray-700 rounded hover:bg-gray-100 lg:hover:bg-transparent lg:border-0 lg:hover:text-blue-700 lg:p-0 lg:w-auto">
                       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
                         <path fillRule="evenodd" d="M5.25 9a6.75 6.75 0 0113.5 0v.75c0 2.123.8 4.057 2.118 5.52a.75.75 0 01-.297 1.206c-1.544.57-3.16.99-4.831 1.243a3.75 3.75 0 11-7.48 0 24.585 24.585 0 01-4.831-1.244.75.75 0 01-.298-1.205A8.217 8.217 0 005.25 9.75V9zm4.502 8.9a2.25 2.25 0 104.496 0 25.057 25.057 0 01-4.496 0z" clipRule="evenodd" />
                       </svg>
@@ -178,7 +178,7 @@ const Navbar = (props: NavbarProps) => {
                     <li className='order-1 lg:order-2'>
                       <Link
                         href="#"
-                        className="flex lg:mr-8 items-center justify-between block rounded text-gray-700 hover:bg-gray-100 lg:p-0 lg:hover:bg-transparent lg:hover:text-blue-700"
+                        className="flex lg:mr-6 items-center justify-between block rounded text-gray-700 hover:bg-gray-100 lg:p-0 lg:hover:bg-transparent lg:hover:text-blue-700"
                         aria-current="page"
                       >
                         <div className='flex items-center justify-between w-full py-2 pl-3 pr-4 font-medium text-gray-700 rounded hover:bg-gray-100 lg:hover:bg-transparent lg:border-0 lg:hover:text-blue-700 lg:p-0 lg:w-auto'>
@@ -243,7 +243,7 @@ const Navbar = (props: NavbarProps) => {
                     <li>
                       <Link
                         href="#"
-                        className="block rounded bg-blue-700 py-2 pl-3 pr-4 text-white dark:text-white lg:bg-transparent lg:p-0 lg:text-blue-700"
+                        className="block rounded font-semibold py-1 pl-3 pr-3 lg:bg-transparent hover:bg-gray-100"
                         aria-current="page"
                       >
                         Log in
@@ -252,7 +252,7 @@ const Navbar = (props: NavbarProps) => {
                     <li>
                       <Link
                         href="#"
-                        className="block rounded py-2 pl-3 pr-4 text-gray-700 hover:bg-gray-100 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white lg:p-0 lg:hover:bg-transparent lg:hover:text-blue-700 lg:dark:hover:bg-transparent lg:dark:hover:text-white"
+                        className="block font-semibold text-blue-700 rounded py-1 pl-3 pr-3 hover:bg-gray-100"
                       >
                         Sign up
                       </Link>
