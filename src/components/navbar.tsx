@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useState } from "react";
 
 interface NavbarProps {
-  loginStatus: boolean;
+  loginStatus?: boolean;
   username: string;
 }
 
@@ -15,7 +15,7 @@ const Navbar = (props: NavbarProps) => {
   return (
     <>
       <main className="">
-        <nav className="w-full rounded border-gray-200 bg-white px-2 py-2.5 dark:bg-gray-900 sm:px-4">
+        <nav className="border-gray-200 w-full rounded bg-white px-2 py-2.5 dark:bg-prussian-blue sm:px-4">
           <div className="container mx-auto flex w-9/12 flex-wrap items-center justify-between">
             <Link href="#" className="mt-2.5 flex self-start">
               <img
@@ -35,7 +35,7 @@ const Navbar = (props: NavbarProps) => {
                 data-collapse-toggle="navbar-search"
                 aria-controls="navbar-search"
                 aria-expanded="false"
-                className="mr-1 rounded-lg p-2.5 text-sm text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-700 md:hidden"
+                className="mr-1 rounded-lg p-2.5 text-sm text-gray hover:bg-gray focus:outline-none focus:ring-4 focus:ring-gray dark:text-gray dark:hover:bg-gray dark:focus:ring-gray md:hidden"
               >
                 <svg
                   className="h-5 w-5"
@@ -55,7 +55,7 @@ const Navbar = (props: NavbarProps) => {
               <div className="relative hidden md:block">
                 <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
                   <svg
-                    className="h-5 w-5 text-gray-500"
+                    className="text-gray-500 h-5 w-5"
                     aria-hidden="true"
                     fill="currentColor"
                     viewBox="0 0 20 20"
@@ -72,7 +72,7 @@ const Navbar = (props: NavbarProps) => {
                 <input
                   type="text"
                   id="search-navbar"
-                  className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2 pl-10 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+                  className="border-gray-300 focus:ring-blue-500 block w-full rounded-lg border bg-gray p-2 pl-10 text-sm text-gray focus:border-blue dark:border-gray dark:bg-gray dark:text-white dark:placeholder-gray dark:focus:border-blue dark:focus:ring-blue"
                   placeholder="Search..."
                 />
               </div>
@@ -81,7 +81,7 @@ const Navbar = (props: NavbarProps) => {
                 data-bs-toggle="collapse"
                 data-bs-target="#navbar-collapse"
                 type="button"
-                className="inline-flex items-center rounded-lg p-2 text-sm text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600 md:hidden"
+                className="text-gray-500 hover:bg-gray-100 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600 inline-flex items-center rounded-lg p-2 text-sm focus:outline-none focus:ring-2 md:hidden"
                 aria-controls="navbar-search"
                 aria-expanded="false"
                 onClick={() => setOpen(!open)}
@@ -112,7 +112,7 @@ const Navbar = (props: NavbarProps) => {
               <div className="relative mt-3 md:hidden">
                 <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
                   <svg
-                    className="h-5 w-5 text-gray-500"
+                    className="text-gray-500 h-5 w-5"
                     aria-hidden="true"
                     fill="currentColor"
                     viewBox="0 0 20 20"
@@ -128,16 +128,16 @@ const Navbar = (props: NavbarProps) => {
                 <input
                   type="text"
                   id="search-navbar"
-                  className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2 pl-10 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+                  className="border-gray-300 bg-gray-50 text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500 block w-full rounded-lg border p-2 pl-10 text-sm dark:text-white"
                   placeholder="Search..."
                 />
               </div>
               {props.loginStatus ? (
-                <ul className="mt-4 flex flex-col rounded-lg border border-gray-100 bg-gray-50 p-4 dark:border-gray-700 dark:bg-gray-800 md:mt-0 md:flex-row md:space-x-8 md:border-0 md:bg-white md:text-sm md:font-medium md:dark:bg-gray-900">
+                <ul className="mt-4 flex flex-col rounded-lg border border-gray bg-gray p-4 dark:border-gray dark:bg-gray md:mt-0 md:flex-row md:space-x-8 md:border-0 md:bg-white md:text-sm md:font-medium md:dark:bg-gray">
                   <li>
                     <Link
                       href="#"
-                      className=" flex items-center justify-between rounded py-2 pl-3 pr-4 text-gray-700 hover:bg-gray-100 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white md:p-0 md:hover:bg-transparent md:hover:text-blue-700 md:dark:hover:bg-transparent md:dark:hover:text-white"
+                      className=" md:hover:bg-transparent md:hover:text-blue-700 md:dark:hover:bg-transparent flex items-center justify-between rounded py-2 pl-3 pr-4 text-gray hover:bg-gray dark:border-gray dark:text-gray dark:hover:bg-gray dark:hover:text-white md:p-0 md:dark:hover:text-white"
                       aria-current="page"
                     >
                       <svg
@@ -160,7 +160,7 @@ const Navbar = (props: NavbarProps) => {
                   <li>
                     <Link
                       href="#"
-                      className=" flex items-center justify-between rounded py-2 pl-3 pr-4 text-gray-700 hover:bg-gray-100 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white sm:mr-8 md:p-0 md:hover:bg-transparent md:hover:text-blue-700 md:dark:hover:bg-transparent md:dark:hover:text-white"
+                      className=" text-gray-700 hover:bg-gray-100 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 md:hover:bg-transparent md:hover:text-blue-700 md:dark:hover:bg-transparent flex items-center justify-between rounded py-2 pl-3 pr-4 dark:hover:text-white sm:mr-8 md:p-0 md:dark:hover:text-white"
                       aria-current="page"
                     >
                       <svg
@@ -191,7 +191,7 @@ const Navbar = (props: NavbarProps) => {
                       onClick={() => {
                         setProfileDropdownOpen(!profileDropdownOpen);
                       }}
-                      className="flex w-full items-center justify-between rounded py-2 pl-3 pr-4 font-medium text-gray-700 hover:bg-gray-100 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white dark:focus:text-white sm:ml-8 md:w-auto md:border-0 md:p-0 md:hover:bg-transparent md:hover:text-blue-700 md:dark:hover:bg-transparent"
+                      className="text-gray-700 hover:bg-gray-100 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 md:hover:bg-transparent md:hover:text-blue-700 md:dark:hover:bg-transparent flex w-full items-center justify-between rounded py-2 pl-3 pr-4 font-medium dark:hover:text-white dark:focus:text-white sm:ml-8 md:w-auto md:border-0 md:p-0"
                     >
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -224,16 +224,16 @@ const Navbar = (props: NavbarProps) => {
                       id="dropdownNavbar"
                       className={`z-10 ${
                         profileDropdownOpen ? "block" : "hidden"
-                      } w-22 mt-2 divide-y divide-gray-100 rounded-lg bg-white font-normal shadow dark:divide-gray-600 dark:bg-gray-700`}
+                      } w-22 divide-gray-100 dark:divide-gray-600 dark:bg-gray-700 mt-2 divide-y rounded-lg bg-white font-normal shadow`}
                     >
                       <ul
-                        className="py-2 text-sm text-gray-700 dark:text-gray-400"
+                        className="text-gray-700 dark:text-gray-400 py-2 text-sm"
                         aria-labelledby="dropdownLargeButton"
                       >
                         <li>
                           <Link
                             href="#"
-                            className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+                            className="hover:bg-gray-100 dark:hover:bg-gray-600 block px-4 py-2 dark:hover:text-white"
                           >
                             Dashboard
                           </Link>
@@ -241,7 +241,7 @@ const Navbar = (props: NavbarProps) => {
                         <li>
                           <Link
                             href="#"
-                            className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+                            className="hover:bg-gray-100 dark:hover:bg-gray-600 block px-4 py-2 dark:hover:text-white"
                           >
                             Settings
                           </Link>
@@ -249,7 +249,7 @@ const Navbar = (props: NavbarProps) => {
                         <li>
                           <Link
                             href="#"
-                            className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+                            className="hover:bg-gray-100 dark:hover:bg-gray-600 block px-4 py-2 dark:hover:text-white"
                           >
                             Earnings
                           </Link>
@@ -258,7 +258,7 @@ const Navbar = (props: NavbarProps) => {
                       <div className="py-1">
                         <Link
                           href="#"
-                          className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-600 dark:hover:text-white"
+                          className="text-gray-700 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-600 block px-4 py-2 text-sm dark:hover:text-white"
                         >
                           Sign out
                         </Link>
@@ -267,11 +267,11 @@ const Navbar = (props: NavbarProps) => {
                   </li>
                 </ul>
               ) : (
-                <ul className="mt-4 flex flex-col rounded-lg border border-gray-100 bg-gray-50 p-4 dark:border-gray-700 dark:bg-gray-800 md:mt-0 md:flex-row md:space-x-8 md:border-0 md:bg-white md:text-sm md:font-medium md:dark:bg-gray-900">
+                <ul className="mt-4 flex flex-col rounded-lg border border-gray bg-gray p-4 dark:border-gray dark:bg-gray md:mt-0 md:flex-row md:space-x-8 md:border-0 md:bg-white md:text-sm md:font-medium md:dark:bg-gray">
                   <li>
                     <Link
-                      href="#"
-                      className="block rounded bg-blue-700 py-2 pl-3 pr-4 text-white dark:text-white md:bg-transparent md:p-0 md:text-blue-700"
+                      href="/login"
+                      className="md:bg-transparent block rounded  py-2 pl-3 pr-4 text-white dark:text-white md:p-0 md:text-blue"
                       aria-current="page"
                     >
                       Log in
@@ -279,8 +279,8 @@ const Navbar = (props: NavbarProps) => {
                   </li>
                   <li>
                     <Link
-                      href="#"
-                      className="block rounded py-2 pl-3 pr-4 text-gray-700 hover:bg-gray-100 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white md:p-0 md:hover:bg-transparent md:hover:text-blue-700 md:dark:hover:bg-transparent md:dark:hover:text-white"
+                      href="/signup"
+                      className="hover:bg-gray-100 md:hover:bg-transparent md:dark:hover:bg-transparent block rounded py-2 pl-3 pr-4 text-white dark:border-gray dark:text-blue dark:hover:bg-gray dark:hover:text-white md:p-0 md:hover:text-blue md:dark:hover:text-white"
                     >
                       Sign up
                     </Link>
