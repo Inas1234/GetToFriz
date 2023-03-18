@@ -1,0 +1,132 @@
+@media screen and (min-width: 768px) {
+    .header-photo{
+        background-image: url("img/header-photo.jpg");
+        background-repeat: no-repeat;
+        background-size: cover;
+        background-position-y: 30%;
+        position: relative;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        text-align: center;
+        color: white;
+        font-family: "Aspira Webfont", Helvetica, Arial, sans-serif;
+        font-weight: 300;
+        font-size: 1.5rem;
+        letter-spacing: 1px;
+        text-shadow: 0 0 10px rgba(0,0,0,0.5);
+        width: 85%;
+        margin: auto;
+        height: 40vh;
+    }
+}
+
+@media screen and (max-width: 1024px){
+    .video-flex{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        width: 85%;
+        margin: auto;
+        margin-top: 4rem;
+    }
+}
+
+.header-photo{
+    margin-top: 4rem;
+}
+
+.footer {
+    background-color: #f0f0f0;
+    padding: 1rem;
+  }
+  
+  .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 960px;
+    margin: 0 auto;
+  }
+  
+  .links {
+    display: flex;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  
+  .links li + li {
+    margin-left: 1rem;
+  }
+
+  /*.about h1{
+    text-align: center;
+    font-size: 48px;
+}
+.about p{
+    padding: 20px;
+    line-height: 1.5;
+    text-align: center;
+}
+
+.categories{
+    display: flex;
+    flex-direction: column;
+    padding: 20px-;
+}
+.categories .modal{
+    display: flex;
+    background-color: rgb(239, 239, 255);
+    width: 80%;
+    margin: 20px auto 0 auto;
+}
+
+.categories .modal img{
+    width: 50%;
+}
+
+.categories .modal .text{
+    text-align: left;
+    padding: 40px;
+  
+}
+
+.categories .modal .text p{
+    text-align: left;
+    padding: 0;
+    color: darkgray;
+}
+.categories .modal .text h2{
+    font-weight: 100;
+}
+.categories .modal .text button{
+    width: 50%;
+    padding: 10px 20px;
+    background-color: #896844;
+    color: white;
+    border-radius: 10px;
+    border: none;
+    margin-left: 25%;
+}
+
+.categories .modal .invertBG{
+    background-color: #896844;
+    color: white;
+}
+
+.categories .modal .invertBG p{
+    color: white;
+}
+.categories .modal .invertBG button{
+    background-color: white;
+    color: black;
+}
+.invert{
+    flex-direction: row-reverse;
+}*/
+    
+
+
