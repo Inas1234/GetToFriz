@@ -57,7 +57,7 @@ const Home: NextPage = (props) => {
 
   return(
     <>
-      <Navbar username={username} loginStatus={loginStatus} />;
+      <Navbar username={"geto"} loginStatus={loginStatus} />;
 
       {/*<div className="flex flex-col justify-center header-photo">
         <main className="flex flex-col items-center justify-center w-full flex-1 px-20 text-center">
