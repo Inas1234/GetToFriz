@@ -1,0 +1,15 @@
+FROM node:19.8-alpine
+
+# Set working directory
+WORKDIR /app
+
+# Copy application files
+COPY . .
+
+RUN npm install
+
+# Expose port for application
+EXPOSE 3000
+
+# Start application
+CMD ["npm", "run", "dev"]

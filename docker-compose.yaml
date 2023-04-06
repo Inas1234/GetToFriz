@@ -1,0 +1,28 @@
+version: "3.9"
+volumes:
+  frizzy-deps:
+services:
+  frizzy:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    working_dir: /app
+    ports:
+      - 9999:3000
+    volumes:
+      - frizzy-deps:/app/node_modules:rw
+      - .:/app
+    environment:
+      CHOKIDAR_USEPOLLING: true
+      NODE_ENV: development
+      NEXT_PUBLIC_CLIENTVAR: "clientvar"
+      DATABASE_URL: "mysql://q9ilrmooi5cf866vlxv0:pscale_pw_6jxEoOENjcpcAmKbnDDtoh0Qg60kYHF4RqULjSgBa97@aws.connect.psdb.cloud/getofriz?sslaccept=strict"
+    networks:
+      network:
+        ipv4_address: 172.27.0.253
+networks:
+  network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.27.0.0/16
