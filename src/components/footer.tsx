@@ -4,6 +4,7 @@ import Link from "next/link";
 
 const Footer = () => {
     return (
+        <>
         <div className="p-4 bg-white sm:p-6 w-10/12 m-auto mt-4">
           <div className="md:flex md:justify-between">
               <div className="mb-6 md:mb-0">
@@ -75,6 +76,7 @@ const Footer = () => {
               </div>
           </div>
     </div>
+    </>
 );}
 
 export default Footer;
