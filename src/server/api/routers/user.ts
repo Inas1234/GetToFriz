@@ -59,7 +59,7 @@ export const userRouter = createTRPCRouter({
       if (!passwordMatch) {
         throw new Error("Incorrect password");
       }
-      const jwt = await new SignJWT({})
+      const jwt = await new SignJWT({ username: user.firstName })
         .setProtectedHeader({ alg: "HS256" })
         .setJti(nanoid())
         .setIssuedAt()
@@ -69,7 +69,6 @@ export const userRouter = createTRPCRouter({
       res.setHeader(
         "Set-Cookie",
         cookie.serialize("token", jwt, {
-          httpOnly: true,
           secure: process.env.NODE_ENV === "production",
           path: "/",
         })
@@ -77,24 +76,23 @@ export const userRouter = createTRPCRouter({
 
       return { user, jwt };
     }),
-  isLoggedIn: publicProcedure
-    .input(
-      z.object({
-        token: z.string(),
-        email: z.string().email(),
-      })
-    )
-    .query(async ({ input: { token, email }, ctx }) => {
+  getUsername: publicProcedure
+    .input(z.object({ token: z.any() }))
+    .query(async ({ input: { token }, ctx }) => {
       const { prisma } = ctx;
-      const { jti } = await verifyAuth(token);
-      const user = await prisma.users.findUnique({
-        where: {
-          email: email,
-        },
-      });
-      if (!user) {
-        throw new Error("User not found");
-      }
-      return { user };
+      const payload = await verifyAuth(token);
+      return { username: payload.username };
     }),
+  logout: publicProcedure.mutation(async ({ ctx }) => {
+    const { res } = ctx;
+    res.setHeader(
+      "Set-Cookie",
+      cookie.serialize("token", "", {
+        secure: process.env.NODE_ENV === "production",
+        path: "/",
+        expires: new Date(0),
+      })
+    );
+    return { success: true };
+  }),
 });

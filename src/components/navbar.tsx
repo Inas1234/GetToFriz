@@ -1,11 +1,13 @@
 import React from "react";
 import Head from "next/head";
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import logo from "../styles/img/frizzy.png";
+import { api } from "../utils/api";
+import Cookies from "js-cookie";
 
 interface NavbarProps {
-  loginStatus?: boolean;
+  loginData?: any;
   username: string;
   role?: string;
 }
@@ -16,6 +18,9 @@ const Navbar = (props: NavbarProps) => {
     useState<boolean>(false);
   const [notificationDropdownOpen, setNotificationDropdownOpen] =
     useState<boolean>(false);
+
+  const [loginStatus, setLoginStatus] = useState<boolean>(false);
+  const [tokenValue, setTokenValue] = useState<any>("");
   const notifications = [
     {
       name: "Adi",
@@ -36,6 +41,26 @@ const Navbar = (props: NavbarProps) => {
       img: "https://media.npr.org/assets/img/2017/09/12/macaca_nigra_self-portrait-3e0070aa19a7fe36e802253048411a38f14a79f8-s1100-c50.jpg",
     },
   ];
+  useEffect(() => {
+    const token = document.cookie
+      .split("; ")
+      .find((row) => row.startsWith("token="));
+    const tokenValue = token ? token.split("=")[1] : null;
+    setTokenValue(tokenValue);
+    console.log(tokenValue);
+    setLoginStatus(!!tokenValue);
+  }, []);
+
+  const name = api.users.getUsername.useQuery({ token: tokenValue });
+
+  console.log(name.data);
+
+  const { mutate: logout } = api.users.logout.useMutation();
+
+  const onlogout = () => {
+    logout();
+  };
+  console.log(loginStatus);
   return (
     <>
       <Head>
@@ -162,7 +187,7 @@ const Navbar = (props: NavbarProps) => {
                   placeholder="Search..."
                 />
               </div>
-              {!props.loginStatus ? (
+              {loginStatus ? (
                 <ul className="mt-4 flex flex-col rounded-lg border border-gray-100 bg-gray-50 p-4 lg:mt-0 lg:flex-row lg:space-x-8 lg:border-0 lg:bg-white lg:text-sm lg:font-medium ">
                   <li className="order-2 lg:order-1 ">
                     <button
@@ -309,7 +334,7 @@ const Navbar = (props: NavbarProps) => {
                           clipRule="evenodd"
                         />
                       </svg>
-                      <span className="ml-2">{props.username}</span>{" "}
+                      <span className="ml-2">{name.data?.username}</span>{" "}
                       <svg
                         className="ml-1 h-5 w-5"
                         aria-hidden="true"
@@ -410,8 +435,8 @@ const Navbar = (props: NavbarProps) => {
                         </li>
                       </ul>
                       <div className="py-1">
-                        <Link
-                          href="#"
+                        <button
+                          onClick={onlogout}
                           className="block flex items-center space-x-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                         >
                           <svg
@@ -429,7 +454,7 @@ const Navbar = (props: NavbarProps) => {
                             />
                           </svg>
                           <div>Odjavi se</div>
-                        </Link>
+                        </button>
                       </div>
                     </div>
                   </li>
@@ -438,7 +463,7 @@ const Navbar = (props: NavbarProps) => {
                 <ul className="mt-4 flex flex-col rounded-lg border border-gray-100 bg-gray-50 p-4 lg:mt-0 lg:flex-row lg:space-x-8 lg:border-0 lg:bg-white lg:text-sm lg:font-medium">
                   <li>
                     <Link
-                      href="#"
+                      href="/login"
                       className="block rounded py-1 pl-3 pr-3 font-semibold hover:bg-gray-100 lg:bg-transparent"
                       aria-current="page"
                     >
@@ -447,7 +472,7 @@ const Navbar = (props: NavbarProps) => {
                   </li>
                   <li>
                     <Link
-                      href="#"
+                      href="/signup"
                       className="block rounded py-1 pl-3 pr-3 font-semibold text-blue-700 hover:bg-gray-100"
                     >
                       Registracija

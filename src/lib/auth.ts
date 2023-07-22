@@ -3,6 +3,7 @@ import { jwtVerify } from "jose";
 interface UserJwtPayload {
   jti: string;
   iat: number;
+  username: string;
 }
 
 export function getJWTSecret(): string {
@@ -20,7 +21,7 @@ export const verifyAuth = async (token: string) => {
       token,
       new TextEncoder().encode(getJWTSecret())
     );
-    return verified.payload as UserJwtPayload;
+    return verified.payload as unknown as UserJwtPayload;
   } catch (e) {
     throw new Error("Invalid token");
   }
