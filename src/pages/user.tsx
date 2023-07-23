@@ -14,7 +14,7 @@ const User: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <Navbar username={"geto"} loginStatus={false}/>;
+      <Navbar username={"geto"} />;
       
 
       <div className="flex-grow sm:mt-6">

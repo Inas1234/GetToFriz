@@ -47,7 +47,7 @@ const TimeTable: NextPage = () => {
         <meta name="description" content="Edit Price Menu" />
         <link rel="icon" href="/favicon.ico" />
     </Head>
-    <Navbar username={"geto"} loginStatus={false}/>;
+    <Navbar username={"geto"}/>;
     <div className="p-4 mt-14">
       <h1 className="mb-4 text-xl font-bold">Rezervacija termina</h1>
       <div className="overflow-x-auto">

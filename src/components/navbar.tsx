@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useState, useEffect } from "react";
 import logo from "../styles/img/frizzy.png";
 import { api } from "../utils/api";
-import Cookies from "js-cookie";
+//import Cookies from "js-cookie";
 
 interface NavbarProps {
   loginData?: any;
@@ -437,7 +437,7 @@ const Navbar = (props: NavbarProps) => {
                       <div className="py-1">
                         <button
                           onClick={onlogout}
-                          className="block flex items-center space-x-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                          className="block flex items-center w-full space-x-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                         >
                           <svg
                             xmlns="http://www.w3.org/2000/svg"

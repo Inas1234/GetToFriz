@@ -12,7 +12,7 @@ const Help: NextPage = () => {
             <Head>
                 <title>Help | My App</title>
             </Head>
-            <Navbar username={"geto"} loginStatus/>
+            <Navbar username={"geto"}/>
 
             <div className="max-w-5xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
                 <h1 className="text-4xl font-bold mb-8 mt-12">Centar za pomoć</h1>
