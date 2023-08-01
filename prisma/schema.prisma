@@ -8,6 +8,7 @@ generator client {
 datasource db {
     provider = "mysql"
     url      = env("DATABASE_URL")
+    relationMode = "prisma"
 }
 
 model Users {
@@ -19,4 +20,20 @@ model Users {
     phoneNumber String
     gender    String
     
+}
+
+
+model Salons {
+    id        String   @id @default(cuid())
+    name      String
+    firstName String
+    lastName  String
+    email     String   @unique
+    password  String
+    phoneNumber String
+    gender    String
+    image     String
+    description String?
+    time_open String
+    time_close String
 }

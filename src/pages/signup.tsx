@@ -7,6 +7,7 @@ import Link from "next/link";
 const Signup: NextPage = () => {
   const [checkedMale, setCheckedMale] = useState<boolean>(false);
   const [checkedFemale, setCheckedFemale] = useState<boolean>(false);
+  const [error, setError] = useState<boolean>(false);
   const [input, setInput] = useState({
     email: "",
     firstName: "",
@@ -19,6 +20,19 @@ const Signup: NextPage = () => {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    const requirements = [
+      input.password.length >= 8,
+      /[A-Z]/.test(input.password),
+      /[0-9]/.test(input.password),
+    ];
+    
+    const isPasswordValid = requirements.every(Boolean);
+    if (!isPasswordValid) {
+      setError(true);
+      return;
+    }
+    else 
+      setError(false);
     const { email, firstName, lastName, phoneNumber, password } = input;
     signup({
       email: email,
@@ -111,6 +125,7 @@ const Signup: NextPage = () => {
                     setInput({ ...input, password: e.target.value });
                   }}
                 />
+                {error && (<p className="text-red-500 font-semibold mt-2">Šifra mora sadržati: minimalno 8 karaktera, 1 veliko slovo i 1 broj.</p>)}
               </div>
               <div className="mb-2 ">
                 <label className="text-gray-800 block text-sm font-semibold">
@@ -119,19 +134,23 @@ const Signup: NextPage = () => {
                 <div className="flex items-center justify-center gap-4">
                   <label>Muško</label>
                   <input
-                    type="checkbox"
                     onChange={() => {
-                      setCheckedMale(!checkedMale);
+                      setCheckedFemale(false);
+                      setCheckedMale(true);
                     }}
+                    type="radio"
+                    name="gender"
                     className="text-blue-700 focus:border-blue-400 focus:ring-blue-300 dark:placeholder-gray-400  block rounded-md border bg-white px-4 py-2 focus:outline-none focus:ring focus:ring-opacity-40"
                   />
 
                   <label>Žensko</label>
                   <input
                     onChange={() => {
-                      setCheckedFemale(!checkedFemale);
+                      setCheckedFemale(true);
+                      setCheckedMale(false);
                     }}
-                    type="checkbox"
+                    type="radio"
+                    name="gender"
                     className="text-blue-700 focus:border-blue-400
                    focus:ring-blue-300 dark:placeholder-gray-400 block rounded-md border bg-white px-4 py-2 focus:outline-none focus:ring focus:ring-opacity-40"
                   />
