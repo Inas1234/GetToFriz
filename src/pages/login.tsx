@@ -7,13 +7,8 @@ import Link from "next/link";
 
 const Signup: NextPage = () => {
   const router = useRouter();
-  const [checkedMale, setCheckedMale] = useState<boolean>(false);
-  const [checkedFemale, setCheckedFemale] = useState<boolean>(false);
   const [input, setInput] = useState({
     email: "",
-    firstName: "",
-    lastName: "",
-    phoneNumber: "",
     password: "",
   });
 

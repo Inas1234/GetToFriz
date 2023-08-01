@@ -239,12 +239,15 @@ const SalonSignup: NextPage = () => {
                     </div>
                 </div>
                 <div className="flex justify-center mb-4">
-                    <button
-                    type="button"
+                    <input
+                    type="file"
+                    name="image"
+                    accept="image/*"
                     className="text-blue-500 font-medium"
-                    >
+                    onChange={handleFileChange}
+                    />
                     Promijeni sliku
-                    </button>
+                    
                 </div>
                 </div>
                 <div className="mb-2 ">
