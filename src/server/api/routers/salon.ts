@@ -2,6 +2,7 @@ import { createTRPCRouter, publicProcedure } from "../trpc";
 import { z } from "zod";
 import aws from "aws-sdk";
 import fs from "fs";
+import bcrypt from "bcrypt";
 
 const s3 = new aws.S3({
   endpoint: "https://salon.images.fra1.digitaloceanspaces.com",
@@ -45,10 +46,18 @@ export const salonRouter = createTRPCRouter({
         },
         ctx,
       }) => {
+        const [existingUser, existingSalon] = await Promise.all([
+          ctx.prisma.users.findUnique({ where: { email } }),
+          ctx.prisma.salons.findUnique({ where: { email } }),
+        ]);
+        if (existingUser || existingSalon) {
+          throw new Error("User already exists");
+        }
+        const hashedPassword = await bcrypt.hash(password, 10);
         await ctx.prisma.salons.create({
           data: {
             email: email,
-            password: password,
+            password: hashedPassword,
             firstName: firstname,
             lastName: lastname,
             phoneNumber: phoneNumber,

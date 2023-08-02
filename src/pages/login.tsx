@@ -18,8 +18,8 @@ const Signup: NextPage = () => {
         pathname: "/",
         query: {
           token: data.jwt,
-          username: data.user.firstName,
-          email: data.user.email,
+          username: data.user?.firstName,
+          email: data.user?.email,
         },
       });
     },

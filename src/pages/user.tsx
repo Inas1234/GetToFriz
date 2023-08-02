@@ -30,39 +30,38 @@ const User: NextPage = () => {
               </h2>
 
               <form>
-              <div className="flex justify-center mb-4">
-                <div className="w-32 h-32 rounded-full overflow-hidden">
-                  <img
-                    src="https://via.placeholder.com/150"
-                    alt="Profile picture"
-                    className="object-cover w-full h-full"
-                  />
-                </div>
-              </div>
-              <div className="flex justify-center mb-4">
-                <button
-                  type="button"
-                  className="text-blue-500 font-medium"
-                >
-                  Promijeni sliku
-                </button>
-              </div>
+              
+              
                 <div className="mb-4">
                   <label
                     htmlFor="name"
                     className="block text-gray-700 font-bold mb-2"
                   >
-                    Ime i prezime
+                    Ime
                   </label>
                   <input
                     type="text"
                     id="name"
                     name="name"
-                    placeholder="Geto"
+                    placeholder="John"
                     className="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                   />
                 </div>
-
+                <div className="mb-4">
+                  <label
+                    htmlFor="surname"
+                    className="block text-gray-700 font-bold mb-2"
+                  >
+                    Prezime
+                  </label>
+                  <input
+                    type="text"
+                    id="surname"
+                    name="surname"
+                    placeholder="Doe"
+                    className="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                  />
+                </div>
                 <div className="mb-4">
                   <label
                     htmlFor="email"
@@ -75,6 +74,21 @@ const User: NextPage = () => {
                     id="email"
                     name="email"
                     placeholder="geto@gmail.com"
+                    className="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                  />
+                </div>
+                <div className="mb-4">
+                  <label
+                    htmlFor="phone"
+                    className="block text-gray-700 font-bold mb-2"
+                  >
+                    Broj telefona
+                  </label>
+                  <input
+                    type="text"
+                    id="phone"
+                    name="phone"
+                    placeholder="123-456-789"
                     className="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                   />
                 </div>

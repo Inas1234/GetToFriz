@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { boolean, z } from "zod";
 
 import { createTRPCRouter, publicProcedure } from "../trpc";
 import cookie from "cookie";
@@ -24,6 +24,13 @@ export const userRouter = createTRPCRouter({
         input: { email, password, firstname, lastname, phoneNumber, gender },
         ctx,
       }) => {
+        const [existingUser, existingSalon] = await Promise.all([
+          ctx.prisma.users.findUnique({ where: { email } }),
+          ctx.prisma.salons.findUnique({ where: { email } }),
+        ]);
+        if (existingUser || existingSalon) {
+          throw new Error("User already exists");
+        }
         const hashedPassword = await bcrypt.hash(password, 10);
         const user = await ctx.prisma.users.create({
           data: {
@@ -47,19 +54,29 @@ export const userRouter = createTRPCRouter({
     )
     .mutation(async ({ input: { email, password }, ctx }) => {
       const { res } = ctx;
-      const user = await ctx.prisma.users.findUnique({
-        where: {
-          email,
-        },
-      });
-      if (!user) {
-        throw new Error("User not found");
+      const [user, salon] = await Promise.all([
+        ctx.prisma.users.findUnique({ where: { email } }),
+        ctx.prisma.salons.findUnique({ where: { email } }),
+      ]);
+
+      let passwordMatch = false;
+      let username = "unknown";
+      if (!user && !salon) {
+        throw new Error("User/Salon does not exist");
       }
-      const passwordMatch = await bcrypt.compare(password, user.password);
+      else if (user) {
+        passwordMatch = await bcrypt.compare(password, user.password);
+        username = user.firstName;
+      }
+      else if (salon) {
+        passwordMatch = await bcrypt.compare(password, salon.password);
+        username = salon.firstName;
+      }
+
       if (!passwordMatch) {
         throw new Error("Incorrect password");
       }
-      const jwt = await new SignJWT({ username: user.firstName })
+      const jwt = await new SignJWT({ username })
         .setProtectedHeader({ alg: "HS256" })
         .setJti(nanoid())
         .setIssuedAt()
