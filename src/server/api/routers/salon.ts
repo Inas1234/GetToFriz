@@ -27,6 +27,8 @@ export const salonRouter = createTRPCRouter({
         description: z.string(),
         openTime: z.string(),
         closeTime: z.string(),
+        city: z.string(),
+        address: z.string(),
       })
     )
     .mutation(
@@ -43,6 +45,8 @@ export const salonRouter = createTRPCRouter({
           openTime,
           closeTime,
           name,
+          city,
+          address,
         },
         ctx,
       }) => {
@@ -67,6 +71,8 @@ export const salonRouter = createTRPCRouter({
             time_close: closeTime,
             gender: gender,
             name: name,
+            city: city,
+            address: address,
           },
         });
 

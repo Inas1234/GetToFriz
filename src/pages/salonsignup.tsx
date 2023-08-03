@@ -18,6 +18,8 @@ type InputState = {
   vrijeme_od: string;
   vrijeme_do: string;
   description: string;
+  city: string;
+  address: string;
 };
 
 type PaymentInfo = {
@@ -50,6 +52,8 @@ const SalonSignup: NextPage = () => {
     vrijeme_od: "",
     vrijeme_do: "",
     description: "",
+    city: "",
+    address: "",
   });
 
   const { mutate: createSalon } = api.salons.createSalon.useMutation();
@@ -134,6 +138,8 @@ const SalonSignup: NextPage = () => {
         vrijeme_od,
         vrijeme_do,
         name,
+        city,
+        address,
       } = input;
 
       await createSalon({
@@ -148,6 +154,8 @@ const SalonSignup: NextPage = () => {
         description: input.description,
         gender: checkedMale ? "Male" : "Female",
         name: name,
+        city: city,
+        address: address,
       });
     } catch (error) {
       console.error(error);
@@ -177,7 +185,7 @@ const SalonSignup: NextPage = () => {
                       Naziv salona
                     </label>
                     <input
-                      type="email"
+                      type="name"
                       className="mt-2 block w-full rounded-md border bg-white px-4 py-2 text-blue-700 focus:border-blue-400 focus:outline-none focus:ring focus:ring-rich-black focus:ring-opacity-40 dark:placeholder-gray-400"
                       required
                       placeholder="Frizzy"
@@ -315,6 +323,34 @@ const SalonSignup: NextPage = () => {
                       </label>
                     </div>
                     {error && (<p className="text-red-500 font-bold mb-4 flex justify-center">Odaberite sliku</p>)}
+                  </div>
+                  <div className="mb-2">
+                    <label className="block text-sm font-semibold text-gray-800">
+                      Grad
+                    </label>
+                    <input
+                      type="city"
+                      className="mt-2 block w-full rounded-md border bg-white px-4 py-2 text-blue-700 focus:border-blue-400 focus:outline-none focus:ring focus:ring-rich-black focus:ring-opacity-40 dark:placeholder-gray-400"
+                      required
+                      placeholder="Zenica"
+                      onChange={(e) => {
+                        setInput({ ...input, city: e.target.value });
+                      }}
+                    />
+                  </div>
+                  <div className="mb-2">
+                    <label className="block text-sm font-semibold text-gray-800">
+                      Adresa
+                    </label>
+                    <input
+                      type="address"
+                      className="mt-2 block w-full rounded-md border bg-white px-4 py-2 text-blue-700 focus:border-blue-400 focus:outline-none focus:ring focus:ring-rich-black focus:ring-opacity-40 dark:placeholder-gray-400"
+                      required
+                      placeholder="Maserykova 12"
+                      onChange={(e) => {
+                        setInput({ ...input, address: e.target.value });
+                      }}
+                    />
                   </div>
                   <div className="mb-2 ">
                     <label className="block text-sm font-semibold text-gray-800">

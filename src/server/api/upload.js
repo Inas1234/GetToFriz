@@ -33,6 +33,7 @@ const s3Storage = multer({
       const ext = path.extname(file.originalname);
       cb(null, `${Date.now().toString()}${ext}`);
     },
+    contentType: multerS3.AUTO_CONTENT_TYPE,
   }),
 });
 

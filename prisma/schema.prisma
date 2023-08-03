@@ -36,4 +36,6 @@ model Salons {
     description String?
     time_open String
     time_close String
+    city      String
+    address   String
 }

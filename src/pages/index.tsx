@@ -6,11 +6,12 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import scissorsImg from "../styles/img/scissors.png";
 import Footer from "../components/footer";
+import Link from "next/link";
 
 const Home: NextPage = (props) => {
   const items = [
     {
-      id: 1,
+      id: "clks954zm0001uk0gs34mpvyq",
       title: "Item 1",
       image:
         "https://bklyner.com/content/images/bklyner/wp-content/uploads/2019/01/Georges-Barbershop-has-been-in-Brooklyn-for-nearly-forty-years.-The-new-Fort-Greene-location-is-their-third-shop-in-the-neighborhood.jpg",
@@ -150,9 +151,9 @@ const Home: NextPage = (props) => {
                 <span className="invisible font-medium text-gray-800">
                   blank
                 </span>
-                <button className="rounded-full bg-blue-500 py-2 px-4 text-white hover:bg-blue-600">
+                <Link href={`/${item.id}`} className="rounded-full bg-blue-500 py-2 px-4 text-white hover:bg-blue-600">
                   Više informacija
-                </button>
+                </Link>
               </div>
             </div>
           ))}
