@@ -61,22 +61,22 @@ export const userRouter = createTRPCRouter({
 
       let passwordMatch = false;
       let username = "unknown";
+      let isSalon = false;
       if (!user && !salon) {
         throw new Error("User/Salon does not exist");
-      }
-      else if (user) {
+      } else if (user) {
         passwordMatch = await bcrypt.compare(password, user.password);
         username = user.firstName;
-      }
-      else if (salon) {
+      } else if (salon) {
         passwordMatch = await bcrypt.compare(password, salon.password);
         username = salon.firstName;
+        isSalon = true;
       }
 
       if (!passwordMatch) {
         throw new Error("Incorrect password");
       }
-      const jwt = await new SignJWT({ username })
+      const jwt = await new SignJWT({ username, isSalon })
         .setProtectedHeader({ alg: "HS256" })
         .setJti(nanoid())
         .setIssuedAt()
@@ -98,7 +98,7 @@ export const userRouter = createTRPCRouter({
     .query(async ({ input: { token }, ctx }) => {
       const { prisma } = ctx;
       const payload = await verifyAuth(token);
-      return { username: payload.username };
+      return { username: payload.username, isSalon: payload.isSalon };
     }),
   logout: publicProcedure.mutation(async ({ ctx }) => {
     const { res } = ctx;
