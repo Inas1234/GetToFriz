@@ -5,6 +5,7 @@ interface UserJwtPayload {
   iat: number;
   username: string;
   isSalon: boolean;
+  email: string;
 }
 
 export function getJWTSecret(): string {

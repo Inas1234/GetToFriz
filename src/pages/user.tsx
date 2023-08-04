@@ -3,9 +3,53 @@ import { NextPage } from "next";
 import Head from "next/head";
 import Navbar from "../components/navbar";
 import Footer from "../components/footer";
+import { useState, useEffect } from "react";
+import { api } from "../utils/api";
+import { useRouter } from "next/router";
 
 const User: NextPage = () => {
+  
+  const [tokenValue, setTokenValue] = useState<any>("");
 
+  useEffect(() => {
+    const token = document.cookie
+      .split("; ")
+      .find((row) => row.startsWith("token="));
+    const tokenValue = token ? token.split("=")[1] : null;
+    setTokenValue(tokenValue);
+    console.log(tokenValue);
+
+  }, []);
+
+  const mail = api.users.getEmail.useQuery({ token: tokenValue });
+  console.log(mail.data?.email + "ovo je mail");
+
+  const [userDetails, setUserDetails] = useState({
+    email: '',
+    newEmail: '',
+    firstname: '',
+    lastname: '',
+    phoneNumber: '',
+    password: '',
+  });
+  useEffect(() => {
+    if (mail.data?.email) {
+      setUserDetails(prev => ({ ...prev, email: mail.data.email }));
+    }
+  }, [mail.data]);
+  const router = useRouter();
+
+  const { mutate: updateProfile } = api.users.updateProfile.useMutation({
+    onSuccess: (data) => {
+      router.push('/');
+    },
+  });
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    updateProfile(userDetails);
+  };
+  
   return (
     <>
       <Head>
@@ -14,7 +58,7 @@ const User: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <Navbar username={"geto"} />;
+      <Navbar  />;
       
 
       <div className="flex-grow sm:mt-6">
@@ -29,7 +73,7 @@ const User: NextPage = () => {
                 Lične informacije
               </h2>
 
-              <form>
+              <form onSubmit={handleSubmit} >
               
               
                 <div className="mb-4">
@@ -43,6 +87,7 @@ const User: NextPage = () => {
                     type="text"
                     id="name"
                     name="name"
+                    onChange={(e) => setUserDetails({...userDetails, firstname: e.target.value})}
                     placeholder="John"
                     className="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                   />
@@ -58,6 +103,7 @@ const User: NextPage = () => {
                     type="text"
                     id="surname"
                     name="surname"
+                    onChange={(e) => setUserDetails({...userDetails, lastname: e.target.value})}
                     placeholder="Doe"
                     className="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                   />
@@ -73,6 +119,7 @@ const User: NextPage = () => {
                     type="email"
                     id="email"
                     name="email"
+                    onChange={(e) => setUserDetails({...userDetails, newEmail: e.target.value})}
                     placeholder="geto@gmail.com"
                     className="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                   />
@@ -88,6 +135,7 @@ const User: NextPage = () => {
                     type="text"
                     id="phone"
                     name="phone"
+                    onChange={(e) => setUserDetails({...userDetails, phoneNumber: e.target.value})}
                     placeholder="123-456-789"
                     className="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                   />
@@ -103,6 +151,7 @@ const User: NextPage = () => {
                     type="password"
                     id="password"
                     name="password"
+                    onChange={(e) => setUserDetails({...userDetails, password: e.target.value})}
                     placeholder="********"
                     className="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                   />
@@ -110,6 +159,7 @@ const User: NextPage = () => {
                 <button
                   type="submit"
                   className="bg-blue-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline hover:bg-blue-600"
+                  disabled={!userDetails.email}
                 >
                   Sačuvaj
                 </button>

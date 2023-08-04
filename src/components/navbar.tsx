@@ -9,7 +9,6 @@ import { useQuery } from "@tanstack/react-query";
 
 interface NavbarProps {
   loginData?: any;
-  username: string;
   role?: string;
 }
 
@@ -68,7 +67,7 @@ const Navbar = (props: NavbarProps) => {
 
   const name = api.users.getUsername.useQuery({ token: tokenValue });
 
-  console.log(name.data);
+  console.log(name.data + " b");
 
   const { mutate: logout } = api.users.logout.useMutation();
   const onlogout = () => {

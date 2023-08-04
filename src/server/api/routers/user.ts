@@ -100,6 +100,13 @@ export const userRouter = createTRPCRouter({
       const payload = await verifyAuth(token);
       return { username: payload.username, isSalon: payload.isSalon };
     }),
+  getEmail: publicProcedure
+    .input(z.object({ token: z.any() }))
+    .query(async ({ input: { token }, ctx }) => {
+      const { prisma } = ctx;
+      const payload = await verifyAuth(token);
+      return { email: payload.email, isSalon: payload.isSalon };
+    }),
   logout: publicProcedure.mutation(async ({ ctx }) => {
     const { res } = ctx;
     res.setHeader(
@@ -112,4 +119,44 @@ export const userRouter = createTRPCRouter({
     );
     return { success: true };
   }),
+  updateProfile: publicProcedure
+    .input(
+      z.object({
+        email: z.string().email(),
+        newEmail: z.string().email(),
+        password: z.string().min(8),
+        firstname: z.string(),
+        lastname: z.string(),
+        phoneNumber: z.string(),
+      })
+    )
+    .mutation(
+      async ({
+        input: { email, newEmail, password, firstname, lastname, phoneNumber },
+        ctx,
+      }) => {
+        const user = await ctx.prisma.users.findUnique({where : {email}})
+
+        if (!user) {
+          throw new Error("User does not exist");
+        }
+
+        const passwordMatch = await bcrypt.compare(password, user.password);
+
+        if (!passwordMatch) {
+          throw new Error("Incorrect password");
+        }
+
+        await ctx.prisma.users.update({
+          where: { email },
+          data: {
+            firstName: firstname,
+            lastName: lastname,
+            email: newEmail,
+            phoneNumber: phoneNumber,
+          },
+        });
+        return { success: true };
+      }
+    )
 });

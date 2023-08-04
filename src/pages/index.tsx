@@ -40,20 +40,9 @@ const Home: NextPage = (props) => {
     },
   ];
 
-  const router = useRouter();
-  const [token, setToken] = useState<any>("");
-  const [username, setUsername] = useState<any>("");
-  const [email, setEmail] = useState<any>("");
-  useEffect(() => {
-    if (router.query.token) {
-      setToken(router.query.token);
-      setUsername(router.query.username);
-      setEmail(router.query.email);
-    }
-  }, [router.query]);
   return (
     <>
-      <Navbar username={username} />;
+      <Navbar />;
       {/*<div className="flex flex-col justify-center header-photo">
         <main className="flex flex-col items-center justify-center w-full flex-1 px-20 text-center">
           <h1 className="text-6xl font-bold">
