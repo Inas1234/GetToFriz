@@ -67,7 +67,7 @@ const Navbar = (props: NavbarProps) => {
 
   const name = api.users.getUsername.useQuery({ token: tokenValue });
 
-  console.log(name.data + " b");
+  console.log(name.data);
 
   const { mutate: logout } = api.users.logout.useMutation();
   const onlogout = () => {

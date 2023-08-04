@@ -76,7 +76,7 @@ export const userRouter = createTRPCRouter({
       if (!passwordMatch) {
         throw new Error("Incorrect password");
       }
-      const jwt = await new SignJWT({ username, isSalon })
+      const jwt = await new SignJWT({ username, isSalon, email })
         .setProtectedHeader({ alg: "HS256" })
         .setJti(nanoid())
         .setIssuedAt()
@@ -135,7 +135,7 @@ export const userRouter = createTRPCRouter({
         input: { email, newEmail, password, firstname, lastname, phoneNumber },
         ctx,
       }) => {
-        const user = await ctx.prisma.users.findUnique({where : {email}})
+        const user = await ctx.prisma.users.findUnique({ where: { email } });
 
         if (!user) {
           throw new Error("User does not exist");
@@ -158,5 +158,5 @@ export const userRouter = createTRPCRouter({
         });
         return { success: true };
       }
-    )
+    ),
 });
