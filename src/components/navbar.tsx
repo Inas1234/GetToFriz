@@ -1,11 +1,11 @@
-import React from "react";
+import React, { ReactEventHandler } from "react";
 import Head from "next/head";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useState, useEffect } from "react";
 import logo from "../styles/img/frizzy.png";
 import { api } from "../utils/api";
-import { userRouter } from "../server/api/routers/user";
+import { useQuery } from "@tanstack/react-query";
 
 interface NavbarProps {
   loginData?: any;
@@ -19,6 +19,20 @@ const Navbar = (props: NavbarProps) => {
     useState<boolean>(false);
   const [notificationDropdownOpen, setNotificationDropdownOpen] =
     useState<boolean>(false);
+
+  const router = useRouter();
+  const [query, setQuery] = useState('');
+  const [showResults, setShowResults] = useState(false);
+  
+  const { data: salons, error } = api.salons.searchSalons.useQuery({ query });
+
+  const onSearchChange = (e: React.ChangeEvent<HTMLInputElement> ) => {
+    setQuery(e.target.value);
+  };
+
+  const onSalonClick = (id: string) => {
+    router.push(`/${id}`);
+  };
 
   const [loginStatus, setLoginStatus] = useState<boolean>(false);
   const [tokenValue, setTokenValue] = useState<any>("");
@@ -57,7 +71,6 @@ const Navbar = (props: NavbarProps) => {
   console.log(name.data);
 
   const { mutate: logout } = api.users.logout.useMutation();
-  const router = useRouter();
   const onlogout = () => {
     logout();
     if (router.pathname === "/") {
@@ -131,12 +144,50 @@ const Navbar = (props: NavbarProps) => {
                   </svg>
                   <span className="sr-only">Search icon</span>
                 </div>
-                <input
-                  type="text"
-                  id="search-navbar"
-                  className="search block rounded-lg border border-gray-300 bg-gray-50 p-2 pl-10 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500"
-                  placeholder="Search..."
-                />
+                <div>
+                  <input
+                    type="text"
+                    value={query}
+                    onChange={onSearchChange}
+                    onFocus={() => setShowResults(true)} // show results when the input is focused
+                    onBlur={() => setTimeout(() => setShowResults(false), 200)} // hide results when the input is blurred
+                    placeholder="Search..."
+                    className="bg-white h-10 px-5 pr-10 rounded-full text-sm focus:outline-none pl-10 border"
+                  />
+                  {showResults && salons && (
+                    <div className="absolute bg-white rounded-xl w-full border border-gray-200 mt-2 max-h-60 overflow-auto">
+                      {salons.map((salon, index) => (
+                        <div
+                        key={salon.id}
+                        onClick={() => onSalonClick(salon.id)}
+                        className={`p-4 hover:bg-gray-100 cursor-pointer border-gray-200 ${index === salons.length - 1 ? "border-b-0" : "border-b-2"}`}
+                    >
+                      <div className="flex items-center" >
+                          <div className="flex-shrink-0">
+                            <img
+                              className="h-10 w-10 rounded-full"
+                              src={salon.image}
+                              alt=""
+                            />
+                          </div>
+                          <div className="ml-4">
+                            <div className="text-sm font-medium text-gray-900">
+                              {salon.name}
+                            </div>
+                            
+                          </div>
+                          <div className="ml-auto text-sm text-gray-500">
+                            
+                              {salon.city} 
+                            
+                          </div>
+                        </div>
+                        
+                    </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
               </div>
               {/*phone size*/}
               <button
@@ -173,27 +224,65 @@ const Navbar = (props: NavbarProps) => {
             >
               <div className="relative mt-3 lg:hidden">
                 <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-                  <svg
-                    className="h-5 w-5 text-gray-500"
-                    aria-hidden="true"
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
-                      clipRule="evenodd"
-                    ></path>
-                  </svg>
+                    <svg
+                        className="h-5 w-5 text-gray-500"
+                        aria-hidden="true"
+                        fill="currentColor"
+                        viewBox="0 0 20 20"
+                        xmlns="http://www.w3.org/2000/svg"
+                    >
+                        <path
+                            fillRule="evenodd"
+                            d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
+                            clipRule="evenodd"
+                        ></path>
+                    </svg>
                 </div>
-                <input
-                  type="text"
-                  id="search-navbar"
-                  className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2 pl-10 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500"
-                  placeholder="Search..."
-                />
-              </div>
+                <div>
+                    <input
+                        type="text"
+                        value={query}
+                        onChange={onSearchChange}
+                        onFocus={() => setShowResults(true)} // show results when the input is focused
+                        onBlur={() => setTimeout(() => setShowResults(false), 200)} // hide results when the input is blurred
+                        placeholder="Search..."
+                        className="bg-white h-10 px-5 pr-10 rounded-full text-sm focus:outline-none pl-10 border w-full" // added left padding (pl-10) here
+                    />
+                    {showResults && salons && (
+                        <div className="absolute bg-white rounded-xl w-full border border-gray-200 mt-2 max-h-60 overflow-auto">
+                            {salons.map((salon) => (
+                                <div
+                                    key={salon.id}
+                                    onClick={() => onSalonClick(salon.id)}
+                                    className="p-4 hover:bg-gray-100 cursor-pointer border"
+                                >
+                                  <div className="flex items-center" >
+                                      <div className="flex-shrink-0">
+                                        <img
+                                          className="h-10 w-10 rounded-full"
+                                          src={salon.image}
+                                          alt=""
+                                        />
+                                      </div>
+                                      <div className="ml-4">
+                                        <div className="text-sm font-medium text-gray-900">
+                                          {salon.name}
+                                        </div>
+                                        
+                                      </div>
+                                      <div className="ml-auto text-sm text-gray-500">
+                                        
+                                          {salon.city} 
+                                        
+                                      </div>
+                                    </div>
+                                    
+                                </div>
+                            ))}
+                        </div>
+                    )}
+                </div>
+            </div>
               {loginStatus ? (
                 <ul className="mt-4 flex flex-col rounded-lg border border-gray-100 bg-gray-50 p-4 lg:mt-0 lg:flex-row lg:space-x-8 lg:border-0 lg:bg-white lg:text-sm lg:font-medium ">
                   {name.data?.isSalon && (

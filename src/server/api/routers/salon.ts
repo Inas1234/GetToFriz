@@ -79,4 +79,15 @@ export const salonRouter = createTRPCRouter({
         return "Salon created";
       }
     ),
+    searchSalons: publicProcedure
+    .input(z.object({ query: z.string() }))
+    .query(async ({ input: { query }, ctx }) => {
+        const { prisma } = ctx;
+        const lowerCaseQuery = query.toLowerCase();
+        const salons = await prisma.salons.findMany();
+
+        const filteredSalons = salons.filter(salon => salon.name.toLowerCase().includes(lowerCaseQuery));
+
+        return filteredSalons;
+    }),
 });
