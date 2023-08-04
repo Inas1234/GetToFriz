@@ -1,16 +1,6 @@
 import { createTRPCRouter, publicProcedure } from "../trpc";
 import { z } from "zod";
-import aws from "aws-sdk";
-import fs from "fs";
 import bcrypt from "bcrypt";
-
-const s3 = new aws.S3({
-  endpoint: "https://salon.images.fra1.digitaloceanspaces.com",
-  credentials: {
-    accessKeyId: "DO00FNPPZNQR6YNVTXUE",
-    secretAccessKey: "K6YAHLX2JcexeS3AFMRzeF6dlj0Cf2SiviqBFzY9BDA",
-  },
-});
 
 export const salonRouter = createTRPCRouter({
   createSalon: publicProcedure
@@ -79,15 +69,24 @@ export const salonRouter = createTRPCRouter({
         return "Salon created";
       }
     ),
-    searchSalons: publicProcedure
+  searchSalons: publicProcedure
     .input(z.object({ query: z.string() }))
     .query(async ({ input: { query }, ctx }) => {
-        const { prisma } = ctx;
-        const lowerCaseQuery = query.toLowerCase();
-        const salons = await prisma.salons.findMany();
+      const { prisma } = ctx;
+      const lowerCaseQuery = query.toLowerCase();
+      const salons = await prisma.salons.findMany();
 
-        const filteredSalons = salons.filter(salon => salon.name.toLowerCase().includes(lowerCaseQuery));
+      const filteredSalons = salons.filter((salon) =>
+        salon.name.toLowerCase().includes(lowerCaseQuery)
+      );
 
-        return filteredSalons;
+      return filteredSalons;
+    }),
+  searchSalobyId: publicProcedure
+    .input(z.object({ id: z.string() }))
+    .query(async ({ input: { id }, ctx }) => {
+      const { prisma } = ctx;
+      const salon = await prisma.salons.findUnique({ where: { id } });
+      return salon;
     }),
 });
