@@ -80,7 +80,7 @@ export const userRouter = createTRPCRouter({
         .setProtectedHeader({ alg: "HS256" })
         .setJti(nanoid())
         .setIssuedAt()
-        .setExpirationTime("1h")
+        .setExpirationTime("24h")
         .sign(new TextEncoder().encode(getJWTSecret()));
 
       res.setHeader(
@@ -136,7 +136,8 @@ export const userRouter = createTRPCRouter({
         ctx,
       }) => {
         const user = await ctx.prisma.users.findUnique({ where: { email } });
-
+        const { res } = ctx;
+        let isSalon = false;
         if (!user) {
           throw new Error("User does not exist");
         }
@@ -154,6 +155,70 @@ export const userRouter = createTRPCRouter({
             lastName: lastname,
             email: newEmail,
             phoneNumber: phoneNumber,
+          },
+        });
+
+        res.setHeader(
+          "Set-Cookie",
+          cookie.serialize("token", "", {
+            maxAge: -1, // Expire the cookie immediately
+            path: "/",
+          })
+        );
+        const jwt = await new SignJWT({ firstname, isSalon, email: newEmail })
+          .setProtectedHeader({ alg: "HS256" })
+          .setJti(nanoid())
+          .setIssuedAt()
+          .setExpirationTime("24h")
+          .sign(new TextEncoder().encode(getJWTSecret()));
+
+        res.setHeader(
+          "Set-Cookie",
+          cookie.serialize("token", jwt, {
+            secure: process.env.NODE_ENV === "production",
+            path: "/",
+          })
+        );
+
+        return { user, jwt };
+      }
+    ),
+    updateProfilePassword: publicProcedure
+    .input(
+      z.object({
+        email: z.string().email(),
+        oldPassword: z.string().min(8),
+        newPassword: z.string().min(8),
+        newPasswordConfirm: z.string().min(8),
+      })
+    )
+    .mutation(
+      async ({
+        input: { email, oldPassword, newPassword, newPasswordConfirm },
+        ctx,
+      }) => {
+        const user = await ctx.prisma.users.findUnique({ where: { email } });
+
+        if (!user) {
+          throw new Error("User does not exist");
+        }
+
+        const passwordMatch = await bcrypt.compare(oldPassword, user.password);
+
+        if (!passwordMatch) {
+          throw new Error("Incorrect password");
+        }
+
+        if (newPassword !== newPasswordConfirm) {
+          throw new Error("Passwords do not match");
+        }
+
+        const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+        await ctx.prisma.users.update({
+          where: { email },
+          data: {
+            password: hashedPassword,
           },
         });
         return { success: true };

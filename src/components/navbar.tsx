@@ -5,7 +5,6 @@ import { useRouter } from "next/router";
 import { useState, useEffect } from "react";
 import logo from "../styles/img/frizzy.png";
 import { api } from "../utils/api";
-import { useQuery } from "@tanstack/react-query";
 
 interface NavbarProps {
   loginData?: any;
@@ -13,28 +12,7 @@ interface NavbarProps {
 }
 
 const Navbar = (props: NavbarProps) => {
-  const [open, setOpen] = useState<boolean>(false);
-  const [profileDropdownOpen, setProfileDropdownOpen] =
-    useState<boolean>(false);
-  const [notificationDropdownOpen, setNotificationDropdownOpen] =
-    useState<boolean>(false);
 
-  const router = useRouter();
-  const [query, setQuery] = useState('');
-  const [showResults, setShowResults] = useState(false);
-  
-  const { data: salons, error } = api.salons.searchSalons.useQuery({ query });
-
-  const onSearchChange = (e: React.ChangeEvent<HTMLInputElement> ) => {
-    setQuery(e.target.value);
-  };
-
-  const onSalonClick = (id: string) => {
-    router.push(`/${id}`);
-  };
-
-  const [loginStatus, setLoginStatus] = useState<boolean>(false);
-  const [tokenValue, setTokenValue] = useState<any>("");
   const notifications = [
     {
       name: "Adi",
@@ -55,31 +33,59 @@ const Navbar = (props: NavbarProps) => {
       img: "https://media.npr.org/assets/img/2017/09/12/macaca_nigra_self-portrait-3e0070aa19a7fe36e802253048411a38f14a79f8-s1100-c50.jpg",
     },
   ];
-  useEffect(() => {
-    const token = document.cookie
-      .split("; ")
-      .find((row) => row.startsWith("token="));
-    const tokenValue = token ? token.split("=")[1] : null;
-    setTokenValue(tokenValue);
-    console.log(tokenValue);
-    setLoginStatus(!!tokenValue);
-  }, []);
 
-  const name = api.users.getUsername.useQuery({ token: tokenValue });
 
-  console.log(name.data);
+  const [open, setOpen] = useState<boolean>(false);
+const [profileDropdownOpen, setProfileDropdownOpen] =
+  useState<boolean>(false);
+const [notificationDropdownOpen, setNotificationDropdownOpen] =
+  useState<boolean>(false);
 
-  const { mutate: logout } = api.users.logout.useMutation();
-  const onlogout = () => {
-    logout();
-    if (router.pathname === "/") {
-      window.location.reload();
-    } else {
-      router.push("/");
-      window.location.reload();
-    }
-  };
-  console.log(loginStatus);
+const router = useRouter();
+const [query, setQuery] = useState('');
+const [showResults, setShowResults] = useState(false);
+
+const { data: salons, error } = api.salons.searchSalons.useQuery({ query });
+
+const onSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  setQuery(e.target.value);
+};
+
+const onSalonClick = (id: string) => {
+  router.push(`/${id}`);
+};
+
+const [loginStatus, setLoginStatus] = useState<boolean>(false);
+const [tokenVal, setTokenValue] = useState<any>("");
+
+useEffect(() => {
+  const token = document.cookie
+    .split("; ")
+    .find((row) => row.startsWith("token="));
+  const tokenVal = token ? token.split("=")[1] : null;
+  setTokenValue(tokenVal);
+  console.log(tokenVal);
+  setLoginStatus(!!tokenVal);
+}, []);
+const [loading, setLoading] = useState(true);
+const name = api.users.getUsername.useQuery({ token: tokenVal });
+useEffect(() => {
+  if (name.data) {
+    setLoading(false);
+  }
+}, [name.data, name.error]);
+
+const { mutate: logout } = api.users.logout.useMutation();
+const onlogout = () => {
+  logout();
+  if (router.pathname === "/") {
+    window.location.reload();
+  } else {
+    router.push("/");
+    window.location.reload();
+  }
+};
+console.log(loginStatus);
   return (
     <>
       <Head>

@@ -22,8 +22,8 @@ const User: NextPage = () => {
   }, []);
 
   const mail = api.users.getEmail.useQuery({ token: tokenValue });
-  console.log(mail.data?.email + "ovo je mail");
 
+  // Profile update
   const [userDetails, setUserDetails] = useState({
     email: '',
     newEmail: '',
@@ -38,7 +38,7 @@ const User: NextPage = () => {
     }
   }, [mail.data]);
   const router = useRouter();
-
+  
   const { mutate: updateProfile } = api.users.updateProfile.useMutation({
     onSuccess: (data) => {
       router.push('/');
@@ -48,6 +48,31 @@ const User: NextPage = () => {
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     updateProfile(userDetails);
+  };
+
+  // Password update
+  const [passwordDetails, setPasswordDetails] = useState({
+    email: '',
+    oldPassword: '',
+    newPassword: '',
+    newPasswordConfirm: '',
+  });
+
+  useEffect(() => {
+    if (mail.data?.email) {
+      setPasswordDetails(prev => ({ ...prev, email: mail.data.email }));
+    }
+  }, [mail.data]);
+
+  const { mutate: updateProfilePassword } = api.users.updateProfilePassword.useMutation({
+    onSuccess: (data) => {
+      router.push('/');
+    },
+  });
+
+  const handleSubmitPassword = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    updateProfilePassword(passwordDetails);
   };
   
   return (
@@ -159,7 +184,6 @@ const User: NextPage = () => {
                 <button
                   type="submit"
                   className="bg-blue-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline hover:bg-blue-600"
-                  disabled={!userDetails.email}
                 >
                   Sačuvaj
                 </button>
@@ -173,7 +197,7 @@ const User: NextPage = () => {
               <h3 className="text-l font-normal text-gray-900 mb-4">
                 Promijeni šifru
               </h3>
-              <form>
+              <form onSubmit={handleSubmitPassword}>
                 <div className="mb-4">
                   <label
                     htmlFor="password"
@@ -185,6 +209,7 @@ const User: NextPage = () => {
                     type="password"
                     id="password"
                     name="password"
+                    onChange={(e) => setPasswordDetails({...passwordDetails, newPassword: e.target.value})}
                     placeholder="********"
                     className="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                   />
@@ -201,6 +226,7 @@ const User: NextPage = () => {
                     type="password"
                     id="confirm-password"
                     name="confirm-password"
+                    onChange={(e) => setPasswordDetails({...passwordDetails, newPasswordConfirm: e.target.value})}
                     placeholder="********"
                     className="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                   />
@@ -216,6 +242,7 @@ const User: NextPage = () => {
                     type="password"
                     id="password"
                     name="password"
+                    onChange={(e) => setPasswordDetails({...passwordDetails, oldPassword: e.target.value})}
                     placeholder="********"
                     className="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                   />
@@ -230,10 +257,10 @@ const User: NextPage = () => {
 
                 </div>
                 <button
-              type="submit"
-              className="bg-blue-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline hover:bg-blue-600"
-            >
-              Sačuvaj
+                  type="submit"
+                  className="bg-blue-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline hover:bg-blue-600"
+                >
+                  Sačuvaj
                 </button>
               </form>
             </div>

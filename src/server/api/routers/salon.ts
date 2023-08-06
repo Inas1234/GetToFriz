@@ -89,4 +89,11 @@ export const salonRouter = createTRPCRouter({
       const salon = await prisma.salons.findUnique({ where: { id } });
       return salon;
     }),
+  searchSalobyEmail: publicProcedure
+    .input(z.object({ email: z.string() }))
+    .query(async ({ input: { email }, ctx }) => {
+      const { prisma } = ctx;
+      const salon = await prisma.salons.findUnique({ where: { email } });
+      return salon;
+    }),
 });
