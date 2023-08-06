@@ -19,6 +19,7 @@ export const salonRouter = createTRPCRouter({
         closeTime: z.string(),
         city: z.string(),
         address: z.string(),
+        premium: z.boolean(),
       })
     )
     .mutation(
@@ -37,6 +38,7 @@ export const salonRouter = createTRPCRouter({
           name,
           city,
           address,
+          premium,
         },
         ctx,
       }) => {
@@ -63,6 +65,7 @@ export const salonRouter = createTRPCRouter({
             name: name,
             city: city,
             address: address,
+            premium: premium,
           },
         });
 
@@ -96,4 +99,9 @@ export const salonRouter = createTRPCRouter({
       const salon = await prisma.salons.findUnique({ where: { email } });
       return salon;
     }),
+  premiumSalons: publicProcedure.query(async ({ ctx }) => {
+    const { prisma } = ctx;
+    const salons = await prisma.salons.findMany({ where: { premium: true } });
+    return salons;
+  }),
 });

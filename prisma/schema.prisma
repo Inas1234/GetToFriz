@@ -38,4 +38,5 @@ model Salons {
     time_close String
     city      String
     address   String
+    premium   Boolean   @default(false)
 }

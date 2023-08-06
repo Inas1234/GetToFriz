@@ -9,36 +9,15 @@ import Footer from "../components/footer";
 import Link from "next/link";
 
 const Home: NextPage = (props) => {
-  const items = [
-    {
-      id: "clks954zm0001uk0gs34mpvyq",
-      title: "Item 1",
-      image:
-        "https://bklyner.com/content/images/bklyner/wp-content/uploads/2019/01/Georges-Barbershop-has-been-in-Brooklyn-for-nearly-forty-years.-The-new-Fort-Greene-location-is-their-third-shop-in-the-neighborhood.jpg",
-      description: "Description for Item 1",
-    },
-    {
-      id: 2,
-      title: "Item 2",
-      image:
-        "https://images.saymedia-content.com/.image/t_share/MTc0MzkzOTk4NTc0NjI2NDM4/barber-shop-names.jpg",
-      description: "Description for Item 2",
-    },
-    {
-      id: 3,
-      title: "Item 3",
-      image:
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ69NJh_tkHvIvN_7CJVvF0evHtjXqjBsU0ifNUmOclZhwTaAw4z9OsNrgl1FxQJd9Q9Gs&usqp=CAU",
-      description: "Description for Item 3",
-    },
-    {
-      id: 4,
-      title: "Item 4",
-      image:
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSRaclPWBvIUxySBepSJeGX6Kzin1wujZDI10yQi8UJBBfWmJiQ9ZIZO8BkavbqWUeD460&usqp=CAU",
-      description: "Description for Item 4",
-    },
-  ];
+  const [items, setItems] = useState<any>([]);
+
+  const data = api.salons.premiumSalons.useQuery();
+
+  useEffect(() => {
+    if (data.status === "success") {
+      setItems(data.data);
+    }
+  }, [data.status]);
 
   return (
     <>
@@ -113,7 +92,7 @@ const Home: NextPage = (props) => {
           </svg>
         </h2>
         <div className="grid grid-cols-1 gap-x-4 gap-y-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3">
-          {items.map((item) => (
+          {items.map((item: any) => (
             <div key={item.id} className="rounded-lg bg-gray-300 p-4 shadow-md">
               <img
                 src={item.image}
@@ -140,7 +119,10 @@ const Home: NextPage = (props) => {
                 <span className="invisible font-medium text-gray-800">
                   blank
                 </span>
-                <Link href={`/${item.id}`} className="rounded-full bg-blue-500 py-2 px-4 text-white hover:bg-blue-600">
+                <Link
+                  href={`/${item.id}`}
+                  className="rounded-full bg-blue-500 py-2 px-4 text-white hover:bg-blue-600"
+                >
                   Više informacija
                 </Link>
               </div>

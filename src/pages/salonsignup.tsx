@@ -7,6 +7,8 @@ import { useEffect } from "react";
 import aws from "aws-sdk";
 import { bool } from "aws-sdk/clients/signer";
 import { set } from "zod";
+import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js";
+import e from "express";
 
 type InputState = {
   name: string;
@@ -20,6 +22,7 @@ type InputState = {
   description: string;
   city: string;
   address: string;
+  premium: boolean;
 };
 
 type PaymentInfo = {
@@ -27,7 +30,11 @@ type PaymentInfo = {
   expDate: string;
   cvv: string;
 };
-
+const initialOptions = {
+  clientId: "test",
+  currency: "USD",
+  intent: "capture",
+};
 const SalonSignup: NextPage = () => {
   const [step, setStep] = useState<number>(1);
   const [imageFile, setImageFile] = useState<File | null>(null);
@@ -54,6 +61,7 @@ const SalonSignup: NextPage = () => {
     description: "",
     city: "",
     address: "",
+    premium: false,
   });
 
   const { mutate: createSalon } = api.salons.createSalon.useMutation();
@@ -85,23 +93,19 @@ const SalonSignup: NextPage = () => {
       /[A-Z]/.test(input.password),
       /[0-9]/.test(input.password),
     ];
-    
+
     const isPasswordValid = requirements.every(Boolean);
     if (step == 1) {
       if (!isPasswordValid) {
         setError(true);
         return;
-      }
-      else 
-        setError(false);
+      } else setError(false);
     }
     if (step == 2) {
       if (imageFile == null) {
         setError(true);
         return;
-      }
-      else 
-        setError(false);
+      } else setError(false);
     }
     if (step < 3) {
       setStep((prevStep) => prevStep + 1);
@@ -120,13 +124,13 @@ const SalonSignup: NextPage = () => {
     const formData = new FormData();
     formData.append("file", imageFile ?? "");
 
-    const response = await fetch("http://localhost:3001/api/upload", {
+    /*const response = await fetch("http://localhost:3001/api/upload", {
       method: "POST",
       body: formData,
     });
 
-    const data = await response.json();
-    console.log(data);
+    const data = await response.json();*/
+    //console.log(data);
 
     try {
       const {
@@ -140,6 +144,7 @@ const SalonSignup: NextPage = () => {
         name,
         city,
         address,
+        premium,
       } = input;
 
       await createSalon({
@@ -150,12 +155,13 @@ const SalonSignup: NextPage = () => {
         password: password,
         openTime: vrijeme_od,
         closeTime: vrijeme_do,
-        image: data.fileUrl ?? "",
+        image: "",
         description: input.description,
         gender: checkedMale ? "Male" : "Female",
         name: name,
         city: city,
         address: address,
+        premium: premium,
       });
     } catch (error) {
       console.error(error);
@@ -261,7 +267,12 @@ const SalonSignup: NextPage = () => {
                         setInput({ ...input, password: e.target.value });
                       }}
                     />
-                    {error && (<p className="text-red-500 font-semibold mt-2">Šifra mora sadržati: minimalno 8 karaktera, 1 veliko slovo i 1 broj.</p>)}
+                    {error && (
+                      <p className="mt-2 font-semibold text-red-500">
+                        Šifra mora sadržati: minimalno 8 karaktera, 1 veliko
+                        slovo i 1 broj.
+                      </p>
+                    )}
                   </div>
                   <div className="mb-2 ">
                     <label className="block text-sm font-semibold text-gray-800">
@@ -322,7 +333,11 @@ const SalonSignup: NextPage = () => {
                         />
                       </label>
                     </div>
-                    {error && (<p className="text-red-500 font-bold mb-4 flex justify-center">Odaberite sliku</p>)}
+                    {error && (
+                      <p className="mb-4 flex justify-center font-bold text-red-500">
+                        Odaberite sliku
+                      </p>
+                    )}
                   </div>
                   <div className="mb-2">
                     <label className="block text-sm font-semibold text-gray-800">
@@ -387,88 +402,38 @@ const SalonSignup: NextPage = () => {
                     >
                       Opis {"(opcionalno)"}
                     </label>
-                    <textarea rows={4} className="w-full" onChange={(e) => {
-                      setInput({ ...input, description: e.target.value });
-                    }} />
+                    <textarea
+                      rows={4}
+                      className="w-full"
+                      onChange={(e) => {
+                        setInput({ ...input, description: e.target.value });
+                      }}
+                    />
                   </div>
                 </>
               )}
               {step === 3 && (
                 <>
                   <div className="mb-2">
-                    <label
-                      htmlFor="image"
-                      className="mb-2 block text-sm font-semibold text-gray-800"
-                    >
-                      Broj kartice
-                    </label>
-                    <input
-                      type="text"
-                      className="mt-2 block w-full rounded-md border bg-white px-4 py-2 text-blue-700 focus:border-blue-400 focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-40 dark:placeholder-gray-400"
-                      placeholder="Card Number"
-                      value={paymentInfo.cardNumber}
-                      onChange={handleCardNumberChange}
-                      required
-                    />
-                  </div>
-                  <div className="mb-2">
-                    <label
-                      htmlFor="image"
-                      className="mb-2 block text-sm font-semibold text-gray-800"
-                    >
-                      Datum isticanja kartice
-                    </label>
-                    <input
-                      type="text"
-                      className="mt-2 block w-full rounded-md border bg-white px-4 py-2 text-blue-700 focus:border-blue-400 focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-40 dark:placeholder-gray-400"
-                      placeholder="Exp. Date (MM/YY)"
-                      value={paymentInfo.expDate}
-                      onChange={handleExpDateChange}
-                      required
-                    />
-                  </div>
-                  <div className="mb-2">
-                    <label
-                      htmlFor="image"
-                      className="mb-2 block text-sm font-semibold text-gray-800"
-                    >
-                      CVV
-                    </label>
-                    <input
-                      type="text"
-                      className="mt-2 block w-full rounded-md border bg-white px-4 py-2 text-blue-700 focus:border-blue-400 focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-40 dark:placeholder-gray-400"
-                      placeholder="CVV"
-                      value={paymentInfo.cvv}
-                      onChange={handleCVVChange}
-                      required
-                    />
-                  </div>
-                  <div className="mb-2 ">
-                    <label className="block text-sm font-semibold text-gray-800">
-                      Način pretplate
-                    </label>
+                    <h1 className="mb-5 block text-lg font-semibold text-gray-800">
+                      Clanarina
+                    </h1>
+                    <div className="flex items-center">
+                      <input
+                        onChange={(e) => {
+                          setInput({ ...input, premium: e.target.checked });
+                        }}
+                        type="checkbox"
+                        className="mr-2"
+                      ></input>
+                      <h1 className="mb-2 block text-lg font-semibold text-gray-800">
+                        Postani premium clan
+                      </h1>
+                    </div>
                     <div className="flex items-center justify-center gap-4">
-                      <label>Mjesečno {"(20KM)"}</label>
-                      <input
-                        type="radio"
-                        name="payment"
-                        onChange={() => {
-                          setCheckedMonthly(true);
-                          setCheckedYearly(false);
-                        }}
-                        className="block rounded-md border bg-white  px-4 py-2 text-blue-700 focus:border-blue-400 focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-40 dark:placeholder-gray-400"
-                      />
-
-                      <label>Godišnje {"(150KM)"}</label>
-                      <input
-                        name="payment"
-                        onChange={() => {
-                          setCheckedYearly(true);
-                          setCheckedMonthly(false);
-                        }}
-                        type="radio"
-                        className="block rounded-md border bg-white px-4 py-2 text-blue-700 focus:border-blue-400 focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-40 dark:placeholder-gray-400"
-                      />
+                      <PayPalScriptProvider options={initialOptions}>
+                        <PayPalButtons></PayPalButtons>
+                      </PayPalScriptProvider>
                     </div>
                   </div>
                 </>
