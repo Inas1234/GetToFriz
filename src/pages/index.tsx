@@ -96,11 +96,11 @@ const Home: NextPage = (props) => {
             <div key={item.id} className="rounded-lg bg-gray-300 p-4 shadow-md">
               <img
                 src={item.image}
-                alt={item.title}
+                alt={item.name}
                 className="mb-4 h-60 w-full rounded-md object-cover object-center"
               />
               <h3 className="mb-2 flex text-lg font-medium">
-                {item.title}
+                {item.name}
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   viewBox="0 0 24 24"
