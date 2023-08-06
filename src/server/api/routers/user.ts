@@ -165,7 +165,7 @@ export const userRouter = createTRPCRouter({
             path: "/",
           })
         );
-        const jwt = await new SignJWT({ firstname, isSalon, email: newEmail })
+        const jwt = await new SignJWT({ username: firstname, isSalon, email: newEmail })
           .setProtectedHeader({ alg: "HS256" })
           .setJti(nanoid())
           .setIssuedAt()
