@@ -3,9 +3,29 @@ import { boolean, z } from "zod";
 import { createTRPCRouter, publicProcedure } from "../trpc";
 import cookie from "cookie";
 import bcrypt from "bcrypt";
-import { SignJWT } from "jose";
+import jose, { JWTPayload, SignJWT, decodeJwt } from "jose";
 import { nanoid } from "nanoid";
 import { getJWTSecret, verifyAuth } from "../../../lib/auth";
+import nodemailer from "nodemailer";
+/*import { Twilio } from 'twilio';
+
+const twilioClient = new Twilio(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN);
+*/
+
+const transporter = nodemailer.createTransport({
+  service: 'gmail',
+  host: 'smtp.gmail.com',
+  port: 465,
+  secure: true,
+  auth: {
+    user: process.env.EMAIL_USERNAME,
+    pass: process.env.EMAIL_PASSWORD
+  }
+});
+
+function isJWTPayload(payload: any): payload is JWTPayload {
+  return typeof payload.email === 'string'; 
+}
 
 export const userRouter = createTRPCRouter({
   signup: publicProcedure
@@ -31,20 +51,122 @@ export const userRouter = createTRPCRouter({
         if (existingUser || existingSalon) {
           throw new Error("User already exists");
         }
+
+        // U slucaju da se vratimo na twilio
+        /*if (typeof process.env.TWILIO_VERIFICATION_SID === 'undefined') {
+          throw new Error("TWILIO_VERIFICATION_SID is not defined in the environment variables.");
+        }
+        const verification = await twilioClient.verify.v2.services(process.env?.TWILIO_VERIFICATION_SID)
+          .verifications.create({ to: phoneNumber, channel: 'sms' });
+
+        if (verification.status !== 'pending') {
+          throw new Error("Failed to send verification code");
+        }*/
+        const jwt = await new SignJWT({ email })
+          .setProtectedHeader({ alg: "HS256" })
+          .setJti(nanoid())
+          .setIssuedAt()
+          .setExpirationTime("24h")
+          .sign(new TextEncoder().encode(getJWTSecret()));
+
         const hashedPassword = await bcrypt.hash(password, 10);
+
         const user = await ctx.prisma.users.create({
           data: {
-            email,
+            email: email,
             password: hashedPassword,
             firstName: firstname,
             lastName: lastname,
-            phoneNumber,
-            gender,
+            phoneNumber: phoneNumber,
+            gender: gender,
           },
         });
-        return user;
+
+        const verificationLink = `${process.env.FRONTEND_URL}/verify-email?token=${jwt}`;
+
+        console.log(process.env.EMAIL_USERNAME);
+        console.log(process.env.EMAIL_PASSWORD);
+        
+        await transporter.sendMail({
+          from: 'frizzybusinessteam@gmail.com',
+          to: email, 
+          subject: 'Email Verification', 
+          text: `Please click on the following link to verify your email: ${verificationLink}`, 
+          html: `<b>Please click on the following link to verify your email:</b> <a href="${verificationLink}">Verify Email</a>`, 
+        });
+        
+        return { token: jwt };
       }
     ),
+    sendEmail: publicProcedure
+      .input(
+        z.object({
+          email: z.string().email(),
+          token: z.string(),
+        })
+      )
+      .mutation(
+        async ({ input: { token, email }, ctx }) => {
+          const verificationLink = `${process.env.FRONTEND_URL}/verify-email?token=${token}`;
+
+          await transporter.sendMail({
+            from: 'frizzybusinessteam@gmail.com',
+            to: email,
+            subject: 'Email Verification',
+            text: `Please click on the following link to verify your email: ${verificationLink}`,
+            html: `<b>Please click on the following link to verify your email:</b> <a href="${verificationLink}">Verify Email</a>`, 
+          });
+          console.log("Email sent");
+        }
+        
+      ),
+    confirmEmail: publicProcedure
+      .input(
+        z.object({
+          token: z.string(),
+        })
+      )
+      .mutation(
+        async ({ input: { token }, ctx }) => {
+          console.log(token);
+          let payload: JWTPayload;
+          try {
+            const decodedJWT = decodeJwt(token);
+            console.log(decodedJWT);
+            if (isJWTPayload(decodedJWT)) {
+              payload = decodedJWT;
+            } else {
+              throw new Error("Invalid JWT payload structure");
+            }
+          
+          } catch (err) {
+              throw new Error("Unable to decode JWT");
+          }
+          const email = payload.email;
+          // U slucaju da se vratimo na twilio
+          /*if (typeof process.env.TWILIO_VERIFICATION_SID === 'undefined') {
+            throw new Error("TWILIO_VERIFICATION_SID is not defined in the environment variables.");
+          }
+
+          const verificationCheck = await twilioClient.verify.v2.services(process.env.TWILIO_VERIFICATION_SID)
+            .verificationChecks.create({ to: phoneNumber, code: verificationCode });
+
+          if (verificationCheck.status !== 'approved') {
+            throw new Error("Verification code is invalid");
+          }*/
+
+          const user = await ctx.prisma.users.update({
+            where: {
+              email: email as string,
+            },
+            data: {
+              activated: true,
+            },
+          });
+
+          return user;
+        }
+      ),
   login: publicProcedure
     .input(
       z.object({
@@ -72,7 +194,9 @@ export const userRouter = createTRPCRouter({
         username = salon.firstName;
         isSalon = true;
       }
-
+      if (user && !user.activated) {
+        throw new Error("Account not activated. Please check your email for an activation link.");
+      }
       if (!passwordMatch) {
         throw new Error("Incorrect password");
       }

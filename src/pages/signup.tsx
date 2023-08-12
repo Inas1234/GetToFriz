@@ -3,10 +3,14 @@ import Head from "next/head";
 import { useState } from "react";
 import { api } from "../utils/api";
 import Link from "next/link";
+import { useRouter } from "next/router";
+import { date } from "zod";
+import { verify } from "crypto";
 
 const Signup: NextPage = () => {
-  const [checkedMale, setCheckedMale] = useState<boolean>(false);
-  const [checkedFemale, setCheckedFemale] = useState<boolean>(false);
+  const [checkedMale, setCheckedMale] = useState<boolean>(true);
+  const [showConfirm, setShowConfirm] = useState<boolean>(false);
+  const [token, setToken] = useState<string>("");
   const [error, setError] = useState<boolean>(false);
   const [input, setInput] = useState({
     email: "",
@@ -14,9 +18,27 @@ const Signup: NextPage = () => {
     lastName: "",
     phoneNumber: "",
     password: "",
+    gender: "",
   });
 
-  const { mutate: signup } = api.users.signup.useMutation();
+  const router = useRouter();
+
+  const { mutate: signup } = api.users.signup.useMutation({
+    onSuccess: (data) => {
+      if(data.token){
+        setToken(data.token);
+        setShowConfirm(true);
+        router.push({
+          //pathname: "/login",
+          query: {
+            token: data.token,
+          },
+        });
+      }
+    },
+  });
+
+  const { mutate: sendEmail } = api.users.sendEmail.useMutation();
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -31,18 +53,19 @@ const Signup: NextPage = () => {
       setError(true);
       return;
     }
-    else 
+    else {
       setError(false);
-    const { email, firstName, lastName, phoneNumber, password } = input;
-    signup({
-      email: email,
-      firstname: firstName,
-      lastname: lastName,
-      password: password,
-      phoneNumber: phoneNumber,
-      gender: checkedMale ? "Male" : "Female",
-    });
+    }
+
+    const { email, firstName: firstname, lastName: lastname, phoneNumber, password, gender } = input;
+
+    signup({ email, firstname, lastname, phoneNumber, password, gender: checkedMale ? "Male" : "Female" });
+    
   };
+
+  const sendEmailAgain = async () => {
+    sendEmail({ email: input.email, token: token });
+  }
 
   return (
     <>
@@ -54,7 +77,9 @@ const Signup: NextPage = () => {
       <main className=" dark:bg-blue-300  md:h-screen">
         <div className="relative flex min-h-screen flex-col justify-center overflow-hidden">
           <div className="m-auto w-full rounded-md bg-timberwolf p-6 shadow-md lg:max-w-xl">
-            <h1 className="text-center text-3xl font-semibold text-rich-black ">
+            {!showConfirm && (
+              <>
+               <h1 className="text-center text-3xl font-semibold text-rich-black ">
               Registracija
             </h1>
             <form className="mt-6" onSubmit={handleSubmit}>
@@ -135,10 +160,10 @@ const Signup: NextPage = () => {
                   <label>Muško</label>
                   <input
                     onChange={() => {
-                      setCheckedFemale(false);
                       setCheckedMale(true);
                     }}
                     type="radio"
+                    defaultChecked={true}
                     name="gender"
                     className="text-blue-700 focus:border-blue-400 focus:ring-blue-300 dark:placeholder-gray-400  block rounded-md border bg-white px-4 py-2 focus:outline-none focus:ring focus:ring-opacity-40"
                   />
@@ -146,7 +171,6 @@ const Signup: NextPage = () => {
                   <label>Žensko</label>
                   <input
                     onChange={() => {
-                      setCheckedFemale(true);
                       setCheckedMale(false);
                     }}
                     type="radio"
@@ -175,6 +199,22 @@ const Signup: NextPage = () => {
                 Prijavite se
               </Link>
             </p>
+              </>
+            )}
+            {showConfirm && (
+              <>
+                <h1 className="text-center text-3xl font-semibold text-rich-black ">
+                  Potvrdite email
+                </h1>
+                <p className="text-gray-600 mb-4 mt-4">Poslali smo mail za potvrdu na vašu email adresu.</p>
+                <p className="text-gray-500">Ako niste dobili email, pritisnite dugme ispod da biste poslali ponovo.</p>
+                <div className="mt-6">
+                  <button onClick={sendEmailAgain} className="focus:bg-blue-600 w-full transform rounded-md bg-blue-500 px-4 py-2 tracking-wide text-white transition-colors duration-200 hover:bg-prussian-blue focus:outline-none">
+                    Pošalji ponovo
+                  </button>
+                </div>
+              </>
+            )}
           </div>
         </div>
       </main>

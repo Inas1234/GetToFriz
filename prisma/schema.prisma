@@ -17,9 +17,9 @@ model Users {
     password  String
     firstName String
     lastName  String
-    phoneNumber String
+    phoneNumber String @unique
     gender    String
-    
+    activated Boolean  @default(false)
 }
 
 
