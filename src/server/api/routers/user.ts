@@ -84,9 +84,6 @@ export const userRouter = createTRPCRouter({
 
         const verificationLink = `${process.env.FRONTEND_URL}/verify-email?token=${jwt}`;
 
-        console.log(process.env.EMAIL_USERNAME);
-        console.log(process.env.EMAIL_PASSWORD);
-        
         await transporter.sendMail({
           from: 'frizzybusinessteam@gmail.com',
           to: email, 
