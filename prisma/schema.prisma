@@ -39,4 +39,28 @@ model Salons {
     city      String
     address   String
     premium   Boolean   @default(false)
+    services  SalonServices[]
 }
+
+model Services {
+    id          String   @id @default(cuid())
+    name        String
+    description String?
+    salons      SalonServices[]
+    // If you have other attributes related directly to the service, add them here
+}
+
+model SalonServices {
+    id            String   @id @default(cuid())
+    salon         Salons   @relation(fields: [salonId], references: [id])
+    service       Services @relation(fields: [serviceId], references: [id])
+    price_for_men Float    // You can also use Decimal depending on your needs
+    price_for_women Float  // You can also use Decimal depending on your needs
+    duration      Int?     // This can be in minutes, but depends on your needs
+    salonId       String    
+    serviceId     String
+
+    @@index([salonId])
+    @@index([serviceId])
+}
+
