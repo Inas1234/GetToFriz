@@ -1,6 +1,6 @@
 import { type NextPage } from "next";
 import Head from "next/head";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { api } from "../utils/api";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -10,6 +10,8 @@ import { verify } from "crypto";
 const Signup: NextPage = () => {
   const [checkedMale, setCheckedMale] = useState<boolean>(true);
   const [showConfirm, setShowConfirm] = useState<boolean>(false);
+  const [lastEmailSent, setLastEmailSent] = useState<Date | null>(null);
+  const [canSendEmail, setCanSendEmail] = useState<boolean>(true);
   const [token, setToken] = useState<string>("");
   const [error, setError] = useState<boolean>(false);
   const [input, setInput] = useState({
@@ -64,8 +66,25 @@ const Signup: NextPage = () => {
   };
 
   const sendEmailAgain = async () => {
-    sendEmail({ email: input.email, token: token });
+    if (canSendEmail) {
+      sendEmail({ email: input.email, token: token });
+      setLastEmailSent(new Date()); // Set the time the email was sent
+      setCanSendEmail(false); // Disable sending the email again
+    }
   }
+
+  useEffect(() => {
+    if (lastEmailSent) {
+      const timeout = setTimeout(() => {
+        const timeSinceLastEmail = new Date().getTime() - lastEmailSent.getTime();
+        if (timeSinceLastEmail >= 60000) { // 60000 ms = 1 minute
+          setCanSendEmail(true); // Allow sending the email again after 1 minute
+        }
+      }, 60000 - (new Date().getTime() - lastEmailSent.getTime())); // Set the timeout based on time left
+  
+      return () => clearTimeout(timeout); // Cleanup the timeout on component unmount
+    }
+  }, [lastEmailSent]);
 
   return (
     <>
@@ -207,11 +226,17 @@ const Signup: NextPage = () => {
                   Potvrdite email
                 </h1>
                 <p className="text-gray-600 mb-4 mt-4">Poslali smo mail za potvrdu na vašu email adresu.</p>
-                <p className="text-gray-500">Ako niste dobili email, pritisnite dugme ispod da biste poslali ponovo.</p>
+                <p className="text-gray-500 mb-4">Ako niste dobili email, pritisnite dugme ispod da biste poslali ponovo.</p>
+                {!canSendEmail && (
+                  <p className="text-red-500 mt-4">Email možete poslati ponovo za 1 minut.</p>
+                )}
                 <div className="mt-6">
-                  <button onClick={sendEmailAgain} className="focus:bg-blue-600 w-full transform rounded-md bg-blue-500 px-4 py-2 tracking-wide text-white transition-colors duration-200 hover:bg-prussian-blue focus:outline-none">
-                    Pošalji ponovo
-                  </button>
+                <button 
+                  onClick={sendEmailAgain} 
+                  disabled={!canSendEmail} 
+                  className={`focus:bg-blue-600 w-full transform rounded-md ${canSendEmail ? 'bg-blue-500 hover:bg-prussian-blue' : 'bg-gray-400 cursor-not-allowed'} px-4 py-2 tracking-wide text-white transition-colors duration-200 focus:outline-none`}>
+                  Pošalji ponovo
+                </button>
                 </div>
               </>
             )}
