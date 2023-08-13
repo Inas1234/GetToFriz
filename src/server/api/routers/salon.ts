@@ -213,4 +213,68 @@ export const salonRouter = createTRPCRouter({
 
       throw new Error("Invalid gender provided");
     }),
+  deleteService: publicProcedure
+    .input(
+      z.object({ name: z.string(), email: z.string(), gender: z.string() })
+    )
+    .mutation(async ({ input: { name, email, gender }, ctx }) => {
+      const salon = await ctx.prisma.salons.findUnique({ where: { email } });
+      if (!salon) {
+        throw new Error("Salon does not exist");
+      }
+
+      const service = await ctx.prisma.services.findFirst({
+        where: { name: name },
+      });
+
+      if (!service) {
+        throw new Error("Service does not exist");
+      }
+
+      const salonService = await ctx.prisma.salonServices.findFirst({
+        where: {
+          salonId: salon.id,
+          serviceId: service.id,
+        },
+      });
+
+      if (!salonService) {
+        throw new Error("Salon-Service relation does not exist");
+      }
+
+      // If the service has prices for both genders, then update the price for the provided gender to 0
+      if (salonService.price_for_men > 0 && salonService.price_for_women > 0) {
+        if (gender.toLowerCase() === "men") {
+          await ctx.prisma.salonServices.update({
+            where: {
+              id: salonService.id,
+            },
+            data: {
+              price_for_men: 0,
+            },
+          });
+        } else if (gender.toLowerCase() === "women") {
+          await ctx.prisma.salonServices.update({
+            where: {
+              id: salonService.id,
+            },
+            data: {
+              price_for_women: 0,
+            },
+          });
+        } else {
+          throw new Error("Invalid gender provided");
+        }
+        return "Service price for " + gender + " deleted";
+      }
+
+      // If the service has a price only for the provided gender, then delete the entire entry
+      await ctx.prisma.salonServices.delete({
+        where: {
+          id: salonService.id,
+        },
+      });
+
+      return "Service deleted entirely";
+    }),
 });

@@ -99,30 +99,39 @@ const PriceMenu: NextPage = () => {
     setServices(newServices);
   };
 
+  const { mutate: removeServiceMutation } =
+    api.salons.deleteService.useMutation();
+
   const removeService = async (
     id: number,
     services: Service[],
+    gender: "men" | "women",
     setServices: React.Dispatch<React.SetStateAction<Service[]>>
   ) => {
     const newServices = services.filter((service) => service.id !== id);
     setServices(newServices);
 
-    // Make an API request to delete the service
-    try {
-      await axios.delete(`/api/services/${id}`);
-      console.log("Service deleted successfully");
-    } catch (error) {
-      console.error("An error occurred while deleting the service", error);
-    }
+    await removeServiceMutation({
+      email: mail.data?.email || "",
+      name: services.find((service) => service.id === id)?.name || "",
+      gender: gender,
+    });
   };
 
   const addService = (
     setServices: React.Dispatch<React.SetStateAction<Service[]>>
   ) => {
-    setServices((prevServices) => [
-      ...prevServices,
-      { id: prevServices.length + 1, name: "", price: 0, duration: 0 },
-    ]);
+    setServices((prevServices) => {
+      // Find the maximum id from the current list of services
+      const maxId = prevServices.length
+        ? Math.max(...prevServices.map((s) => s.id))
+        : 0;
+
+      return [
+        ...prevServices,
+        { id: maxId + 1, name: "", price: 0, duration: 0 },
+      ];
+    });
   };
 
   return (
@@ -224,9 +233,10 @@ const PriceMenu: NextPage = () => {
                     <button
                       type="button"
                       onClick={() =>
-                        handleRemoveService(
+                        removeService(
                           service.id,
                           menServices,
+                          "men",
                           setMenServices
                         )
                       }
@@ -336,9 +346,10 @@ const PriceMenu: NextPage = () => {
                     <button
                       type="button"
                       onClick={() =>
-                        handleRemoveService(
+                        removeService(
                           service.id,
                           womenServices,
+                          "women",
                           setWomenServices
                         )
                       }
