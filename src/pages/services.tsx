@@ -44,7 +44,7 @@ const ServicesPage: NextPage = () => {
                 <link rel="icon" href="/favicon.ico" />
             </Head>
 
-            <Navbar username={"geto"} />;
+            <Navbar/>;
 
             <div className="flex-grow sm:mt-6">
                 <div className="mx-auto max-w-7xl py-12 px-4 sm:px-6 lg:px-8">

@@ -15,7 +15,7 @@ interface Service {
 
 const PriceMenu: NextPage = () => {
   const [menServices, setMenServices] = useState<Service[]>([]);
-
+  const [isSaved, setIsSaved] = useState<boolean>(false);
   const [womenServices, setWomenServices] = useState<Service[]>([]);
   const [tokenValue, setTokenValue] = useState<any>("");
 
@@ -89,6 +89,10 @@ const PriceMenu: NextPage = () => {
         description: "",
       });
     });
+    setIsSaved(true);
+    setTimeout(() => {
+      setIsSaved(false);
+    }, 3000);
   };
 
   const handleRemoveService = (
@@ -148,7 +152,15 @@ const PriceMenu: NextPage = () => {
           <h1 className="mb-8 text-3xl font-bold text-gray-900">
             Izmjenjivanje cjenovnika
           </h1>
-
+          {isSaved && (
+            <div className="fixed inset-0 flex items-center justify-center z-50">
+              <div className="absolute inset-0 bg-black opacity-40"></div>
+              <div className="relative bg-white p-6 rounded-lg shadow-xl text-center transform transition-transform duration-300 scale-90">
+                <h2 className="text-2xl text-green-700 font-semibold mb-2">Uspješno!</h2>
+                <p>Uspješno ste sačuvali promjene</p>
+              </div>
+            </div>
+          )}
           <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
             <div className="rounded-lg bg-white px-6 py-8 shadow shadow-gray-700">
               <h2 className="mb-4 text-xl font-bold text-gray-900">
