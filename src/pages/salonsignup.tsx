@@ -9,6 +9,7 @@ import { bool } from "aws-sdk/clients/signer";
 import { set } from "zod";
 import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js";
 import e from "express";
+import { useRouter } from "next/router";
 
 type InputState = {
   name: string;
@@ -83,7 +84,7 @@ const SalonSignup: NextPage = () => {
   const handleCVVChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setPaymentInfo({ ...paymentInfo, cvv: e.target.value });
   };
-
+  const router = useRouter();
   const handleNextStep = (
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>
   ) => {
@@ -109,6 +110,9 @@ const SalonSignup: NextPage = () => {
     }
     if (step < 3) {
       setStep((prevStep) => prevStep + 1);
+    }
+    else {
+      router.push("/login");
     }
   };
 
