@@ -5,6 +5,7 @@ import Navbar from "../components/navbar";
 import Footer from "../components/footer";
 import axios from "axios";
 import { api } from "../utils/api";
+import { isError } from "@tanstack/react-query";
 
 interface Service {
   id: number;
@@ -16,6 +17,7 @@ interface Service {
 const PriceMenu: NextPage = () => {
   const [menServices, setMenServices] = useState<Service[]>([]);
   const [isSaved, setIsSaved] = useState<boolean>(false);
+  const [error, setIsError] = useState<boolean>(false);
   const [womenServices, setWomenServices] = useState<Service[]>([]);
   const [tokenValue, setTokenValue] = useState<any>("");
 
@@ -79,6 +81,20 @@ const PriceMenu: NextPage = () => {
   const { mutate: addServiceMutation } = api.salons.addService.useMutation();
 
   const handleSubmit = (services: Service[], gneder: "men" | "women") => {
+    const duplicates = services.filter(
+      (service, index, self) =>
+        index !== self.findIndex((s) => s.name === service.name)
+    );
+
+    if (duplicates.length > 0) {
+      setIsError(true);
+      setTimeout(() => {
+        setIsError(false);
+        window.location.reload();
+      }, 3000);
+      return;
+    }
+
     services.forEach((service) => {
       addServiceMutation({
         name: service?.name || "",
@@ -89,6 +105,10 @@ const PriceMenu: NextPage = () => {
         description: "",
       });
     });
+    if (error === true) {
+      return;
+    }
+
     setIsSaved(true);
     setTimeout(() => {
       setIsSaved(false);
@@ -153,11 +173,24 @@ const PriceMenu: NextPage = () => {
             Izmjenjivanje cjenovnika
           </h1>
           {isSaved && (
-            <div className="fixed inset-0 flex items-center justify-center z-50">
+            <div className="fixed inset-0 z-50 flex items-center justify-center">
               <div className="absolute inset-0 bg-black opacity-40"></div>
-              <div className="relative bg-white p-6 rounded-lg shadow-xl text-center transform transition-transform duration-300 scale-90">
-                <h2 className="text-2xl text-green-700 font-semibold mb-2">Uspješno!</h2>
+              <div className="relative scale-90 transform rounded-lg bg-white p-6 text-center shadow-xl transition-transform duration-300">
+                <h2 className="mb-2 text-2xl font-semibold text-green-700">
+                  Uspješno!
+                </h2>
                 <p>Uspješno ste sačuvali promjene</p>
+              </div>
+            </div>
+          )}
+          {error && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center">
+              <div className="absolute inset-0 bg-black opacity-40"></div>
+              <div className="relative scale-90 transform rounded-lg bg-white p-6 text-center shadow-xl transition-transform duration-300">
+                <h2 className="mb-2 text-2xl font-semibold text-red-700">
+                  Greska!
+                </h2>
+                <p>Vec postoji servis</p>
               </div>
             </div>
           )}
