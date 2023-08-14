@@ -173,8 +173,8 @@ export const salonRouter = createTRPCRouter({
       }
     ),
   getServicesByGender: publicProcedure
-    .input(z.object({ gender: z.string() }))
-    .query(async ({ input: { gender }, ctx }) => {
+    .input(z.object({ gender: z.string(), email: z.string() }))
+    .query(async ({ input: { gender, email }, ctx }) => {
       const { prisma } = ctx;
 
       if (gender.toLowerCase() === "men") {
@@ -182,6 +182,9 @@ export const salonRouter = createTRPCRouter({
           where: {
             price_for_men: {
               not: 0, // or you can use NOT_NULL based on your DB setup
+            },
+            salon: {
+              email: email,
             },
           },
           include: {
@@ -198,6 +201,9 @@ export const salonRouter = createTRPCRouter({
           where: {
             price_for_women: {
               not: 0,
+            },
+            salon: {
+              email: email,
             },
           },
           include: {

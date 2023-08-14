@@ -27,12 +27,15 @@ const PriceMenu: NextPage = () => {
     setTokenValue(tokenValue);
     console.log(tokenValue);
   }, []);
+  const mail = api.users.getEmail.useQuery({ token: tokenValue });
 
   const menServicesQuery = api.salons.getServicesByGender.useQuery({
     gender: "men",
+    email: mail.data?.email || "",
   });
   const womenServicesQuery = api.salons.getServicesByGender.useQuery({
     gender: "women",
+    email: mail.data?.email || "",
   });
 
   useEffect(() => {
@@ -51,8 +54,6 @@ const PriceMenu: NextPage = () => {
       setWomenServices(servicesWithId);
     }
   }, [menServicesQuery.data, womenServicesQuery.data]);
-
-  const mail = api.users.getEmail.useQuery({ token: tokenValue });
 
   const handleServiceChange = (
     id: number,
